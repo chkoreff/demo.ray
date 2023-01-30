@@ -135,7 +135,7 @@ link()
 	stale $file_e $objects
 	if [ $? -eq 1 ]; then
 		mkdir -p $(dirname $file_e)
-		run gcc -rdynamic -s $objects -o $file_e -lm -ldl
+		run gcc -rdynamic -s $objects -o $file_e -lm -ldl -lpthread
 	fi
 	objects=""
 	}
