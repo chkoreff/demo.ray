@@ -1,3 +1,6 @@
+*.swp
 /bin
 /obj
 /raylib
+/v
+msg
