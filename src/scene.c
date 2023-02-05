@@ -32,17 +32,7 @@ struct list_rectangle_l *list_rectangle_l;
 struct list_plane *list_plane;
 struct list_text_area *list_text_area;
 
-void draw_scope_3D(void)
-	{
-	BeginMode3D(camera);
-
-	draw_list_cube(list_cube);
-	draw_list_cube_l(list_cube_l);
-	draw_list_plane(list_plane);
-
-	EndMode3D();
-	}
-
+// LATER 20230205 Do this configuration in Fexl.
 void configure_scene(void)
 	{
 	InitWindow(screenWidth, screenHeight, title);
@@ -150,11 +140,23 @@ void run_scene(void)
 
 		ClearBackground(background_color);
 
-		draw_scope_3D();
+		// Draw the 3D objects
+		{
+		BeginMode3D(camera);
 
+		draw_list_cube(list_cube);
+		draw_list_cube_l(list_cube_l);
+		draw_list_plane(list_plane);
+
+		EndMode3D();
+		}
+
+		// Draw the 2D objects
+		{
 		draw_list_rectangle(list_rectangle);
 		draw_list_rectangle_l(list_rectangle_l);
 		draw_list_text_area(list_text_area);
+		}
 
 		EndDrawing();
 		}
