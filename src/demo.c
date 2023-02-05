@@ -1,9 +1,18 @@
-#include <ext.h>
+#include <output.h>
+#include <fexl.h>
+#include <stdio.h>
+#include <scene.h>
 
-int main(int argc, const char *argv[])
+int main(void)
 	{
-	(void)argc;
-	(void)argv;
-	ray_win_display();
+	beg_fexl();
+	if (1)
+		run_scene();
+	else
+		{
+		if (0) printf("Hello world\n");
+		put("Hello world.");nl();
+		}
+	end_fexl();
 	return 0;
 	}

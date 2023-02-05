@@ -1,15 +1,32 @@
 #!/bin/sh
 . ./lib_build
 
+make basic
+make die
+make fexl
+make file
+make format
+make memory
+make output
+make value
+
+make cube
+make cube_l
+
+make rectangle
+make rectangle_l
+
+make plane
+make text_area
+
+make scene
 make demo
 
-# Build raylib.
+# Add raylib modules.
 objects="$objects ../raylib/src/rcore.o"
 objects="$objects ../raylib/src/rglfw.o"
 objects="$objects ../raylib/src/rmodels.o"
 objects="$objects ../raylib/src/rshapes.o"
 objects="$objects ../raylib/src/libraylib.a"
-
-make ext
 
 link demo
