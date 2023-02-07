@@ -1,0 +1,66 @@
+#
+\create_parent_directory=
+	(@\loop\path
+	\parent=(dirname path)
+	is_dir parent ();
+	loop parent
+	#trace ["mkdir "parent" "(oct "775")]
+	\code=(mkdir parent (oct "775"))
+	if (eq code -1) (error ["Could not create directory "path])
+	)
+
+\run_simple_process=
+	(
+	\echo=
+		(\fh @\loop
+		#\text=(fread fh 8192)
+		\text=(fread fh 256)
+		#\text=(fread fh 1)
+		eq text "" ();
+		put text
+		loop
+		)
+
+	\child_fn\input
+	run_process child_fn \child_in\child_out
+
+	fput child_in input
+	fclose child_in
+
+	# LATER 20220717 a version where we don't have to echo the output
+	echo child_out
+	fflush stdout
+
+	\status
+	status
+	)
+
+\run_cmd=
+	(\argv
+	run_simple_process (exec argv)
+	)
+
+# Run a shell command with no input.
+# LATER 20220717 Sometimes I get no output with these:
+#   \cmd="pwd"
+#   \cmd="echo hello"
+# I can work around it by doing (fread fh 1) above.
+\run_sh=
+	(\verbose\cmd
+	#\cmd="pwd"
+	#\cmd="echo hello"
+	#\cmd="ls -l"
+
+	\s_cmd=(to_str cmd)
+	if verbose (say ["$ "s_cmd])
+	\status=(run_cmd ["/bin/sh" "-c" s_cmd] "")
+	eq 0 status ();
+	die
+	)
+
+\form
+def "create_parent_directory" create_parent_directory;
+def "run_simple_process" run_simple_process;
+def "run_cmd" run_cmd;
+def "run_sh" run_sh;
+form

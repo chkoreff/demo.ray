@@ -32,7 +32,7 @@ struct list_rectangle_l *list_rectangle_l;
 struct list_plane *list_plane;
 struct list_text_area *list_text_area;
 
-// LATER 20230205 Do this configuration in Fexl.
+// LATER 20230205 Do this configuration in Fexl using code generation
 void configure_scene(void)
 	{
 	InitWindow(screenWidth, screenHeight, title);

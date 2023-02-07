@@ -1,15 +1,14 @@
 #!/bin/sh
 . ./lib_build
 
-make basic
+# Build the memory module.
 make die
-make fexl
 make file
 make format
-make memory
 make output
-make value
+make memory
 
+# Build shapes.
 make cube
 make cube_l
 

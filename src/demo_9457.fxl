@@ -1,0 +1,193 @@
+# Create the executable code for a raylib graphics program and run it.
+
+\do_cube_demo==
+(
+\cx_gen=(value; std; use "lib/raylib_1505/gen.fxl")
+\cx_display=(value; std; cx_gen; use "lib/raylib_1505/display.fxl")
+
+value;
+std;
+cx_gen;
+cx_display;
+
+# Use these if you need to write to stdout, because cx_gen redefines them.
+def "_say" say;
+def "_put" put;
+def "_nl" nl;
+\;
+
+#_say "= gen_cube_demo"
+
+\gen_cube_demo==
+	(
+	\screenWidth=="800"
+	\screenHeight=="450"
+
+	\fps=="60"
+	#\fps=="120" # NOTE This is too fast, you can see the aliasing.
+
+	\background_color=="RAYWHITE"
+
+	\camera_mode=="CAMERA_FIRST_PERSON"
+	\camera_position==["4.0" "2.0" "4.0"]
+	\camera_target==["0.0" "1.8" "0.0"]
+	\camera_up==["0.0" "1.0" "0.0"]
+	\camera_fovy=="60.0"
+	\camera_projection=="CAMERA_PERSPECTIVE"
+
+	\max_columns=="20"
+
+	\routine
+	\next
+
+	say "// raylib [core] example - 3d camera first person";
+	say "// Copyright (c) 2015-2022 Ramon Santamaria (@raysan5)";
+	nl;
+	say ~ #include <raylib.h>~;
+	say ~ #include <pthread.h>~;
+	nl;
+	say ["#define MAX_COLUMNS "max_columns];
+	nl;
+	say ["void "routine"(void)"];
+	scope
+		(\next
+		say ["const int screenWidth = "screenWidth";"];
+		say ["const int screenHeight = "screenHeight";"];
+		say "Camera camera = { 0 };";
+		nl;
+		say "// Generates some random columns";
+		say "float heights[MAX_COLUMNS] = { 0 };";
+		say "Vector3 positions[MAX_COLUMNS] = { 0 };";
+		say "Color colors[MAX_COLUMNS] = { 0 };";
+		nl;
+		say "InitWindow(screenWidth, screenHeight,";
+		say ~ "raylib [core] example - 3d camera first person"~;
+		say ");";
+		nl;
+		say ["// Define the camera to look into our 3d world"
+			" (position, target, up vector)"];
+		say ["camera.position = "(Vector3 camera_position)";"];
+		say ["camera.target = "(Vector3 camera_target)";"];
+		say ["camera.up = "(Vector3 camera_up)";"];
+		say ["camera.fovy = "camera_fovy";"];
+		say ["camera.projection = "camera_projection";"];
+		nl;
+		# LATER 20230204 much more abstraction of the graphic scene here
+		say "for (int i = 0; i < MAX_COLUMNS; i++)";
+		scope
+			(\next
+			say "heights[i] = (float)GetRandomValue(1, 12);";
+			nl;
+			say "positions[i] =";
+			indent
+				(
+				say "(Vector3)";
+				say "{";
+				say "(float)GetRandomValue(-15, 15),";
+				say "heights[i]/2.0f,";
+				say "(float)GetRandomValue(-15, 15)";
+				say "};";
+				end
+				);
+			nl;
+			say "colors[i] = (Color)";
+			indent
+				(
+				say "{";
+				say "GetRandomValue(20, 255),";
+				say "GetRandomValue(10, 55),";
+				say "30, 255";
+				say "};";
+				end
+				);
+			next
+			);
+		nl;
+
+		say ["SetCameraMode(camera, "camera_mode");"];
+		say ["SetTargetFPS("fps");"];
+		nl;
+		say "// Main game loop";
+		say ["while (!WindowShouldClose())"
+			" // Detect window close button or ESC key"];
+		scope
+			(\next
+			say "UpdateCamera(&camera);";
+			nl;
+			say "BeginDrawing();";
+			say ["ClearBackground("background_color");"];
+			nl;
+			say "BeginMode3D(camera);";
+			nl;
+
+			# Draw ground
+			DrawPlane ["0.0" "0.0" "0.0"] ["32.0" "32.0"] "LIGHTGRAY";
+			# Draw a blue wall
+			DrawCube ["-16.0" "2.5" "0.0"] "1.0" "5.0" "32.0" "BLUE";
+			# Draw a green wall
+			DrawCube ["16.0" "2.5" "0.0"] "1.0" "5.0" "32.0" "LIME";
+			# Draw a yellow wall
+			DrawCube ["0.0" "2.5" "16.0"] "32.0" "5.0" "1.0" "GOLD";
+
+			# Draw some cubes around
+			say "for (int i = 0; i < MAX_COLUMNS; i++)";
+			scope
+				(\next
+				DrawWireCube
+					"positions[i]"
+					"2.0"
+					"heights[i]"
+					"2.0"
+					"colors[i]"
+					"MAROON"
+					;
+				next
+				);
+			nl;
+			say "EndMode3D();";
+			nl;
+
+			DrawWireRectangle "10" "10" "220" "70"
+				(Fade "SKYBLUE" "0.5") "BLUE";
+
+			DrawText "First person camera default controls:"
+				"20" "20" "10" "BLACK";
+
+			DrawText "- Move with keys: W, A, S, D"
+				"40" "40" "10" "DARKGRAY";
+
+			DrawText "- Mouse move to look around"
+				"40" "60" "10" "DARKGRAY";
+
+			nl;
+			say "EndDrawing();";
+			next
+			);
+		nl;
+		say "CloseWindow(); // Close window and OpenGL context";
+		say "return;";
+		next
+		);
+	nl;
+	next
+	)
+
+# Add the main program.
+\gen_source==
+	(\next
+	\routine=="ray_win_display"
+	gen_cube_demo routine;
+	gen_main routine;
+	next
+	)
+
+\source==(gen_source end "")
+#_put source
+
+# Run raylib on the source code.
+raylib_C T source
+)
+
+#do_benchmark;
+do_cube_demo
+say "DONE"

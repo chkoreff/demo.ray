@@ -1,0 +1,125 @@
+#
+\do_gen_C==
+	(\source\file_c
+	create_parent_directory file_c
+	\fh=(fopen file_c "w")
+	fput fh source
+	fclose fh
+	)
+
+\do_compile==
+	(
+	\options==
+	[
+	"-Wall" "-Werror" "-Wunused-parameter" "-Wdeclaration-after-statement"
+	"-O3"
+	"-I ."
+	]
+
+	\file_c\file_o
+	create_parent_directory file_o
+	run_sh T ["gcc -c "(join " " options)" "file_c" -o "file_o]
+	)
+
+\do_link==
+	(\objects\libs\file_e
+	create_parent_directory file_e
+	run_sh T ["gcc -s "(join " " objects)" -o "file_e" "(join " " libs)]
+	)
+
+# The root directory is one level above src.
+\dir_root=
+	(
+	eq dir_local "." "..";
+	dirname dir_local
+	)
+
+\do_link_raylib=
+	(
+	\dir_raylib=(path_under dir_root "raylib/src")
+
+	\raylib_objects=
+	(
+	map (path_under dir_raylib)
+	[
+	"rcore.o"
+	"rglfw.o"
+	"rmodels.o"
+	"rshapes.o"
+	"libraylib.a"
+	]
+	)
+
+	\file_o\file_e
+
+	\objects==[file_o; raylib_objects]
+	\libs==["-lm" "-ldl" "-lpthread"]
+
+	do_link objects libs file_e
+	)
+
+# Find position of the last "." in name, if any.
+\find_suffix=
+	(\name
+	\pos=(search name "." 0)
+	is_void pos pos;
+
+	(@\loop\pos
+	\pos=(+ pos 1)
+	\next_pos=(search name "." pos)
+	is_void next_pos pos;
+	loop next_pos
+	)
+	pos
+	)
+
+# Extract the logical module from a script name.
+\get_module=
+	(\name
+	\name=(basename name) # Doesn't matter how we got here.
+	\pos=(find_suffix name)
+	is_void pos name;
+	slice name 0 (- pos 1)
+	)
+
+\dir_bin=(path_under dir_root "cache/bin")
+\dir_src=(path_under dir_root "cache/src")
+\dir_obj=(path_under dir_root "cache/obj")
+
+# (raylib_C run source)
+#
+# Build or run a raylib application from the given C source code.  This uses
+# the name of the currently running script to establish a place in the cache
+# directory to build the code.
+#
+# LATER 20230203 Automatically download and compile raylib if not present.
+\raylib_C==
+	(\run\source
+
+	\script_name=(default ""; argv 1)
+	\module=(get_module script_name)
+
+	\file_e=(path_under dir_bin module)
+	\stale==(is_newer script_name file_e)
+
+	if stale
+	(
+	trace_elapsed;
+
+	\file_c=(path_under dir_src; . module ".c")
+	\file_o=(path_under dir_obj; . module ".o")
+
+	do_gen_C source file_c
+	do_compile file_c file_o
+	do_link_raylib file_o file_e
+	)
+
+	if (run)
+	(
+	run_sh F (path_under dir_bin module)
+	)
+	)
+
+\form
+def "raylib_C" raylib_C;
+form
