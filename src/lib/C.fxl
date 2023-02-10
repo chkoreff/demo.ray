@@ -12,6 +12,11 @@
 		)
 	)
 
+# LATER 20230204 C quote arbitrary text, including escape chars and multi-line
+# strings.
+\quoteC==(\text [QU text QU])
+
 \form
 def "scope" scope;
+def "quoteC" quoteC;
 form

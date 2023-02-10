@@ -1,0 +1,174 @@
+#
+\cx=(value; std; use "lib/splitter.fxl")
+value; cx \;
+
+\source_name=(argv 2)
+is_undef source_name
+	(
+	trace "Usage:"
+	trace ["fexl "(argv 1)" <source_name>"]
+	die
+	);
+
+# (split_lines str)
+# Split a string into lines.
+\split_lines=
+	(\str
+
+	(@\loop\beg
+	\end=(search str NL beg)
+	is_undef end
+		(
+		\len=(length str)
+		eq beg len []; # Done
+		\line=(slice str beg (- len beg))
+		[line] # No trailing NL
+		);
+
+	\line=(slice str beg (- end beg))
+	\beg=(+ 1 end)
+	[line; loop beg]
+	) 0
+	)
+
+# (read_file name)
+# Read the text from a named file.
+\read_file=
+	(\name
+	\fh=(fopen name "r")
+	is_void fh (error ["Could not open "name]);
+	\text=(file_content fh)
+	fclose fh
+	text
+	)
+
+# (read_lines name)
+# Read the lines from a named file.  I could do this without reading all the
+# text into memory, but it's fine like this.
+\read_lines=
+	(\name
+	split_lines; read_file name
+	)
+
+# (count_tabs str)
+# Count the leading TAB chars on the string.
+\count_tabs=
+	(\str
+	\len=(length str)
+
+	(@\loop\pos
+	eq pos len pos;
+	\ch=(slice str pos 1)
+	ne ch TAB pos;
+	\pos=(+ 1 pos)
+	loop pos
+	) 0
+	)
+
+# (count_tabs str)
+# Return {level line}, where level is the number of leading TAB chars on the
+# string, and line is the string with those TABs removed.
+\strip_tabs=
+	(\str
+	\level=(count_tabs str)
+	\line=(slice str level (- (length str) level))
+	{level line}
+	)
+
+# (group_by_level prev_levl list)
+# Group the list of pairs {level data} by level number.
+\group_by_level=
+	(@\loop\prev_level\list
+	list {[] []} \pair\tail
+	pair \curr_level\data
+	compare curr_level prev_level
+		{[] list}
+		(
+		loop prev_level tail \gs\tail
+		{[{T data};gs] tail}
+		)
+		(
+		\next_level=(+ 1 prev_level)
+		loop next_level list \gs1\tail
+		loop prev_level tail \gs2\tail
+		{[{F gs1};gs2] tail}
+		)
+	)
+
+# (group_indent name)
+# Read lines from a named file and group by indentation level.
+\group_indent==
+	(\name
+	\lines=(read_lines name)
+	\lines=(map strip_tabs lines)
+	group_by_level 0 lines \data\tail
+	data
+	)
+
+# Walk the data returned from group_indent.
+\walk==
+	(\do_end\do_nl\do_say\do_indent
+	@\loop\list
+	list do_end \item\tail
+	\next
+	(
+	item \is_leaf
+	is_leaf
+		(\line eq line "" do_nl (do_say line))
+		(do_indent loop)
+	);
+	loop tail next
+	)
+
+# Translate group_indent data into the original source.
+\gen_original=
+	(
+	walk
+		()
+		nl
+		say
+		(\loop\rows
+		indent (loop rows end))
+		)
+
+# Translate group_indent data into a Fexl function which generates the original
+# source.
+\gen_fexl=
+	(
+	walk
+		(say "end")
+		(say "nl;")
+		(\line say ["say "(fexl_quote line)";"])
+		(\loop\rows\next
+		say "indent";
+		indent
+			(
+			say "(";
+			loop rows;
+			say ");";
+			end
+			);
+		next
+		)
+	)
+
+# Parenthesize the Fexl function.
+\gen_fexl==
+	(\data\next
+	say "(";
+	gen_fexl data;
+	say ")";
+	next
+	)
+
+\data=(group_indent source_name)
+
+#show_benchmark;
+to_stdout
+	(
+	#say "reproduced source:";
+	#gen_original data;
+	#say "Fexl function:";
+	gen_fexl data;
+	end
+	)

@@ -1,0 +1,16 @@
+# Stream functional output to a file handle.
+
+\to_stdout==
+	(\gen
+	fput stdout (gen "")
+	)
+
+\to_stderr==
+	(\gen
+	fput stderr (gen "")
+	)
+
+\form
+def "to_stdout" to_stdout;
+def "to_stderr" to_stderr;
+form

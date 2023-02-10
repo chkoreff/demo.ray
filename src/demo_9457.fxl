@@ -1,22 +1,6 @@
 # Create the executable code for a raylib graphics program and run it.
-
-\do_cube_demo==
-(
-\cx_gen=(value; std; use "lib/raylib_1505/gen.fxl")
-\cx_display=(value; std; cx_gen; use "lib/raylib_1505/display.fxl")
-
-value;
-std;
-cx_gen;
-cx_display;
-
-# Use these if you need to write to stdout, because cx_gen redefines them.
-def "_say" say;
-def "_put" put;
-def "_nl" nl;
-\;
-
-#_say "= gen_cube_demo"
+\cx=(value; std; use "lib/demo.fxl")
+value; cx; \;
 
 \gen_cube_demo==
 	(
@@ -172,22 +156,26 @@ def "_nl" nl;
 	next
 	)
 
-# Add the main program.
-\gen_source==
-	(\next
-	\routine=="ray_win_display"
-	gen_cube_demo routine;
-	gen_main routine;
+# Generate a main program which calls a display routine.
+\gen_main==
+	(\routine\next
+	say "int main(void)";
+	scope
+		(\next
+		say [""routine"();"];
+		say "return 0;";
+		next
+		);
 	next
 	)
 
-\source==(gen_source end "")
-#_put source
+# Add the main program.
+\gen_source==
+	(
+	\routine=="ray_win_display"
+	gen_cube_demo routine;
+	gen_main routine;
+	end
+	)
 
-# Run raylib on the source code.
-raylib_C T source
-)
-
-#do_benchmark;
-do_cube_demo
-say "DONE"
+run_demo [] gen_source

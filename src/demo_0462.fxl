@@ -1,0 +1,271 @@
+# Create the executable code for a raylib graphics program and run it.
+\cx=(value; std; use "lib/demo.fxl")
+value; cx; \;
+
+\ManuLogic==
+    (\point\next
+      eq point "head"
+      (
+           # say "float manuX = 0.0;";
+           say "float manuY = 0.0;";
+           say "float manuZ = 0.0;";
+           say "Vector3 manuBoundFactor = (Vector3){ 0.0f, 0.0f, 0.0f };";
+           next
+      );
+      eq point "assign"
+      (
+          say "manuY = (IsKeyDown(KEY_DOWN))   ? 1.0f : (IsKeyDown(KEY_UP))  ? -1.0f : 0.0f;";
+          say "manuZ = (IsKeyDown(KEY_LEFT)) ? -1.0f : (IsKeyDown(KEY_RIGHT)) ? 1.0f : 0.0f;";
+          say ["manuBoundFactor.y = "
+               "(manuY > 0) ? (fmax(0.0,(1.0 - (0.4 * (camera.position.y - 4.0))))) : "
+               "(manuY < 0) ? (fmax(0.0,(1.0 + (0.4 * (camera.position.y - 4.0))))) : 1.0;"];
+               # "(manuZ > 0) ? (fmax(0.0,(10.0 - (fmax(0.0,camera.position.z-1.0) / 2.0))) / 10) : "
+          say ["manuBoundFactor.z = "
+               "(manuZ > 0) ? (fmax(0.0,(1.0 - (0.1 * camera.position.z)))) : "
+               "(manuZ < 0) ? (fmax(0.0,(1.0 + (0.1 * camera.position.z)))) : "
+               "1.0;"];
+          # say [~ printf("TEST %f %f \n", manuZ, camera.position.z);~];
+          next
+      );
+      next
+    )
+
+\ColumnsLogic==
+   (\point\next
+    eq point "head"
+    (
+        say "// Generates some random columns";
+        say "float heights[MAX_COLUMNS] = { 0 };";
+        say "Vector3 positions[MAX_COLUMNS] = { 0 };";
+        say "Color colors[MAX_COLUMNS] = { 0 };";
+        say "int colsOffset = 0;";
+        say "float renderInterval = 16.0;";
+        say "float renderBound = renderInterval;";
+        next
+    );
+    # LATER 20230204 much more abstraction of the graphic scene here
+    eq point "randomize"
+    (
+        say "for (int i = colsOffset; i < (colsOffset + COL_INTERVAL); i++)";
+        scope
+        (\next
+            say "heights[i] = (float)GetRandomValue(1, 4);";
+            nl;
+            say "positions[i] =";
+            indent
+            (
+                say "(Vector3)";
+                say "{";
+                say "((renderBound - renderInterval) + (float)GetRandomValue(0, 32)),";
+                say "heights[i]/2.0f,";
+                say "(float)GetRandomValue(-15, 15)";
+                say "};";
+                end
+            );
+            nl;
+            say "colors[i] = (Color)";
+            indent
+            (
+                say "{";
+                say "GetRandomValue(20, 255),";
+                say "GetRandomValue(10, 55),";
+                say "30, 255";
+                say "};";
+                end
+            );
+            next
+        );
+        say "colsOffset = (colsOffset + COL_INTERVAL) % MAX_COLUMNS;";
+        next
+    );
+    eq point "generate"
+    (
+        say "BeginMode3D(camera);";
+        # Draw some cubes around
+        DrawPlane ["(renderBound - (0.4 * renderInterval))" "0.0" "0.0"]
+                  ["renderInterval" "2 * renderInterval"] "(colsOffset == 0) ? DARKGRAY : LIGHTGRAY";
+        DrawPlane ["(renderInterval + (renderBound - (0.4 * renderInterval)))" "0.0" "0.0"]
+                  ["renderInterval" "2 * renderInterval"] "(colsOffset == 0) ? LIGHTGRAY : DARKGRAY";
+        say "for (int i = 0; i < MAX_COLUMNS; i++)";
+        scope
+        (\next
+            DrawWireCube
+            "positions[i]"
+            "2.0"
+            "heights[i]"
+            "2.0"
+            "colors[i]"
+            "MAROON";
+            next
+        );
+        say "EndMode3D();";
+        next
+    );
+    next
+)
+
+\CameraInteractor==
+        (\manuFactor\inertia\next
+
+        \manuDelta=["Vector3Multiply(manuBoundFactor,Vector3Multiply("
+                (Vector3 manuFactor) ","
+                (Vector3 ["0.0" "manuY" "manuZ"]) "))"
+        ]
+        \inerDelta=[(Vector3 inertia)]
+
+        say ["camera.position = Vector3Add(camera.position,"manuDelta");"];
+        say ["camera.target = Vector3Add(camera.target,"manuDelta");"];
+        say ["camera.position = Vector3Add(camera.position,"inerDelta");"];
+        say ["camera.target = Vector3Add(camera.target,"inerDelta");"];
+    next
+    )
+
+\RenderIterate==
+        (\arg\next
+         say "if (abs(camera.position.x) > renderBound) {";
+         indent
+                (
+                say "renderBound += renderInterval;";
+                # say [~ printf("TEST %f %f %f \n", manuZ);~];
+                ColumnsLogic "randomize";
+                ColumnsLogic "generate";
+                end
+                );
+         say "}";
+         next
+        )
+
+\InfoDisplay==
+    (\point\next
+     eq point "generate"
+     (
+         DrawWireRectangle "10" "10" "220" "70"
+             (Fade "SKYBLUE" "0.5") "BLUE";
+
+         DrawText "First person camera default controls:"
+             "20" "20" "10" "BLACK";
+
+         DrawText "- Move with keys: W, A, S, D"
+             "40" "40" "10" "DARKGRAY";
+
+         DrawText "- Mouse move to look around"
+             "40" "60" "10" "DARKGRAY";
+         next
+    );
+    next
+)
+
+\gen_cube_demo==
+    (
+    \screenWidth=="800"
+    \screenHeight=="450"
+
+    \fps=="60"
+    #\fps=="120" # NOTE This is too fast, you can see the aliasing.
+
+    \background_color=="RAYWHITE"
+
+    \camera_mode=="CAMERA_FIRST_PERSON"
+    \camera_position==["0.0" "4.0" "0.0"]
+    \camera_target==["4.0" "4.0" "0.0"]
+    \camera_up==["0.0" "1.0" "0.0"]
+    \camera_fovy=="60.0"
+    \camera_projection=="CAMERA_PERSPECTIVE"
+
+    \max_columns=="40"
+    \col_interval=="20"
+
+    \routine
+    \next
+
+    say "// raylib [core] example - 3d camera first person";
+    say "// Copyright (c) 2015-2022 Ramon Santamaria (@raysan5)";
+    nl;
+    say ~ #include <stdlib.h>~;
+    say ~ #include <stdio.h>~;
+    say ~ #include <raylib.h>~;
+    say ~ #include <raymath.h>~;
+    say ~ #include <pthread.h>~;
+    nl;
+    say ["#define MAX_COLUMNS "max_columns];
+    say ["#define COL_INTERVAL "col_interval];
+    nl;
+    say ["void "routine"(void)"];
+    scope
+        (\next
+        say ["const int screenWidth = "screenWidth";"];
+        say ["const int screenHeight = "screenHeight";"];
+        say "Camera camera = { 0 };";
+        say ["Vector3 startPosition = "(Vector3 camera_position)";"];
+        nl;
+        ColumnsLogic "head";
+                ManuLogic "head";
+        nl;
+        say "InitWindow(screenWidth, screenHeight,";
+        say ~ "raylib [core] example - 3d camera first person"~;
+        say ");";
+        nl;
+        say ["// Define the camera to look into our 3d world"
+            " (position, target, up vector)"];
+        say "camera.position = startPosition;";
+        say ["camera.target = "(Vector3 camera_target)";"];
+        say ["camera.up = "(Vector3 camera_up)";"];
+        say ["camera.fovy = "camera_fovy";"];
+        say ["camera.projection = "camera_projection";"];
+        nl;
+        ColumnsLogic "randomize";
+
+        say ["SetCameraMode(camera, "camera_mode");"];
+        say ["SetTargetFPS("fps");"];
+        nl;
+        say "// Main game loop";
+        say ["while (!WindowShouldClose())"
+            " // Detect window close button or ESC key"];
+        scope
+            (\next
+            # say "UpdateCamera(&camera);";
+                        ManuLogic "assign";
+                        CameraInteractor ["0.0" "0.1" "0.1"] ["0.06" "0.0" "0.0"];
+                        RenderIterate 10;
+            nl;
+                        # say [~ printf("TEST %f \n", camera.position.x);~]; nl;
+            say "BeginDrawing();";
+            say ["ClearBackground("background_color");"];
+            nl;
+            ColumnsLogic "generate";
+            InfoDisplay "generate";
+            nl;
+            say "EndDrawing();";
+            next
+            );
+        nl;
+        say "CloseWindow(); // Close window and OpenGL context";
+        say "return;";
+        next
+        );
+    nl;
+    next
+    )
+
+\gen_main==
+	(\routine\next
+	say "int main(void)";
+	scope
+		(\next
+		say [""routine"();"];
+		say "return 0;";
+		next
+		);
+	next
+	)
+
+# Add the main program.
+\gen_source==
+    (
+    \routine=="ray_win_display"
+    gen_cube_demo routine;
+    gen_main routine;
+    end
+    )
+
+run_demo [] gen_source

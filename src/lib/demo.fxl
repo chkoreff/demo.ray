@@ -1,0 +1,29 @@
+# Top level library for demo scripts
+
+\cx_build=
+	(
+	\cx_proc=(value; std; use "lib/proc.fxl")
+	value; std; cx_proc; use "lib/build.fxl"
+	)
+
+# Basic output rendering with C enhancements.
+\cx_render=
+	(
+	\cx_base=(value; std; use "lib/base.fxl")
+	\cx_C=(value; std; cx_base; use "lib/C.fxl")
+
+	\form
+	cx_base;
+	cx_C;
+	form
+	)
+
+# Display raylib types and routines.
+\cx_raylib=(value; std; cx_render; use "lib/raylib.fxl")
+
+\form
+std;
+cx_render;
+cx_raylib;
+cx_build;
+form

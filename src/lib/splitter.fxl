@@ -1,0 +1,9 @@
+#
+\cx_base=(value; std; use "lib/base.fxl")
+\cx_output=(value; std; use "lib/output.fxl")
+
+\form
+std;
+cx_base;
+cx_output;
+form

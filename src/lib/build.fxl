@@ -1,4 +1,24 @@
 #
+\raylib_objects==
+[
+"rcore.o"
+"rglfw.o"
+"rmodels.o"
+"rshapes.o"
+"libraylib.a"
+]
+
+# The root directory is one level above src.
+\dir_root=
+	(
+	eq dir_local "." "..";
+	dirname dir_local
+	)
+
+\dir_bin=(path_under dir_root "cache/bin")
+\dir_src=(path_under dir_root "cache/src")
+\dir_obj=(path_under dir_root "cache/obj")
+
 \do_gen_C==
 	(\source\file_c
 	create_parent_directory file_c
@@ -13,7 +33,8 @@
 	[
 	"-Wall" "-Werror" "-Wunused-parameter" "-Wdeclaration-after-statement"
 	"-O3"
-	"-I ."
+	"-I" "."
+	"-I" dir_local
 	]
 
 	\file_c\file_o
@@ -25,37 +46,6 @@
 	(\objects\libs\file_e
 	create_parent_directory file_e
 	run_sh T ["gcc -s "(join " " objects)" -o "file_e" "(join " " libs)]
-	)
-
-# The root directory is one level above src.
-\dir_root=
-	(
-	eq dir_local "." "..";
-	dirname dir_local
-	)
-
-\do_link_raylib=
-	(
-	\dir_raylib=(path_under dir_root "raylib/src")
-
-	\raylib_objects=
-	(
-	map (path_under dir_raylib)
-	[
-	"rcore.o"
-	"rglfw.o"
-	"rmodels.o"
-	"rshapes.o"
-	"libraylib.a"
-	]
-	)
-
-	\file_o\file_e
-
-	\objects==[file_o; raylib_objects]
-	\libs==["-lm" "-ldl" "-lpthread"]
-
-	do_link objects libs file_e
 	)
 
 # Find position of the last "." in name, if any.
@@ -82,10 +72,6 @@
 	slice name 0 (- pos 1)
 	)
 
-\dir_bin=(path_under dir_root "cache/bin")
-\dir_src=(path_under dir_root "cache/src")
-\dir_obj=(path_under dir_root "cache/obj")
-
 # (raylib_C run source)
 #
 # Build or run a raylib application from the given C source code.  This uses
@@ -94,7 +80,7 @@
 #
 # LATER 20230203 Automatically download and compile raylib if not present.
 \raylib_C==
-	(\run\source
+	(\local_objects\run\source
 
 	\script_name=(default ""; argv 1)
 	\module=(get_module script_name)
@@ -111,7 +97,28 @@
 
 	do_gen_C source file_c
 	do_compile file_c file_o
-	do_link_raylib file_o file_e
+
+	\objects=
+		(
+		\dir=(path_under dir_root "raylib/src")
+		map (path_under dir) raylib_objects
+		)
+
+	\objects=
+		(
+		append objects;
+
+		# LATER 20230210 Eliminate build script and do that in Fexl.
+		run_sh T ["cd "dir_local" && ./build"]
+
+		\dir=(path_under dir_root "obj")
+		map (path_under dir) local_objects
+		)
+
+	do_link
+		[file_o; objects]
+		["-lm" "-ldl" "-lpthread"]
+		file_e
 	)
 
 	if (run)
@@ -120,6 +127,13 @@
 	)
 	)
 
+\run_demo==
+	(\local_objects\gen_source
+	\source==(gen_source "")
+	# Run raylib on the source code.
+	raylib_C local_objects T source
+	)
+
 \form
-def "raylib_C" raylib_C;
+def "run_demo" run_demo;
 form

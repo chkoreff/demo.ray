@@ -17,15 +17,3 @@ make rectangle_l
 
 make plane
 make text_area
-
-make scene
-make demo
-
-# Add raylib modules.
-objects="$objects ../raylib/src/rcore.o"
-objects="$objects ../raylib/src/rglfw.o"
-objects="$objects ../raylib/src/rmodels.o"
-objects="$objects ../raylib/src/rshapes.o"
-objects="$objects ../raylib/src/libraylib.a"
-
-link demo
