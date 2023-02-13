@@ -34,7 +34,7 @@ value; cx; \;
 	nl;
 	say ["void "routine"(void)"];
 	scope
-		(\next
+		(
 		say ["const int screenWidth = "screenWidth";"];
 		say ["const int screenHeight = "screenHeight";"];
 		say "Camera camera = { 0 };";
@@ -59,7 +59,7 @@ value; cx; \;
 		# LATER 20230204 much more abstraction of the graphic scene here
 		say "for (int i = 0; i < MAX_COLUMNS; i++)";
 		scope
-			(\next
+			(
 			say "heights[i] = (float)GetRandomValue(1, 12);";
 			nl;
 			say "positions[i] =";
@@ -84,7 +84,7 @@ value; cx; \;
 				say "};";
 				end
 				);
-			next
+			end
 			);
 		nl;
 
@@ -95,7 +95,7 @@ value; cx; \;
 		say ["while (!WindowShouldClose())"
 			" // Detect window close button or ESC key"];
 		scope
-			(\next
+			(
 			say "UpdateCamera(&camera);";
 			nl;
 			say "BeginDrawing();";
@@ -116,7 +116,7 @@ value; cx; \;
 			# Draw some cubes around
 			say "for (int i = 0; i < MAX_COLUMNS; i++)";
 			scope
-				(\next
+				(
 				DrawWireCube
 					"positions[i]"
 					"2.0"
@@ -125,7 +125,7 @@ value; cx; \;
 					"colors[i]"
 					"MAROON"
 					;
-				next
+				end
 				);
 			nl;
 			say "EndMode3D();";
@@ -145,12 +145,12 @@ value; cx; \;
 
 			nl;
 			say "EndDrawing();";
-			next
+			end
 			);
 		nl;
 		say "CloseWindow(); // Close window and OpenGL context";
 		say "return;";
-		next
+		end
 		);
 	nl;
 	next
@@ -161,10 +161,10 @@ value; cx; \;
 	(\routine\next
 	say "int main(void)";
 	scope
-		(\next
+		(
 		say [""routine"();"];
 		say "return 0;";
-		next
+		end
 		);
 	next
 	)

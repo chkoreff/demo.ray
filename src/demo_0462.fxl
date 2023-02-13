@@ -48,7 +48,8 @@ value; cx; \;
     (
         say "for (int i = colsOffset; i < (colsOffset + COL_INTERVAL); i++)";
         scope
-        (\next
+        (
+		#\next
             say "heights[i] = (float)GetRandomValue(1, 4);";
             nl;
             say "positions[i] =";
@@ -73,7 +74,8 @@ value; cx; \;
                 say "};";
                 end
             );
-            next
+            #next
+			end
         );
         say "colsOffset = (colsOffset + COL_INTERVAL) % MAX_COLUMNS;";
         next
@@ -87,8 +89,8 @@ value; cx; \;
         DrawPlane ["(renderInterval + (renderBound - (0.4 * renderInterval)))" "0.0" "0.0"]
                   ["renderInterval" "2 * renderInterval"] "(colsOffset == 0) ? LIGHTGRAY : DARKGRAY";
         say "for (int i = 0; i < MAX_COLUMNS; i++)";
-        scope
-        (\next
+		scope
+        (
             DrawWireCube
             "positions[i]"
             "2.0"
@@ -96,7 +98,7 @@ value; cx; \;
             "2.0"
             "colors[i]"
             "MAROON";
-            next
+			end
         );
         say "EndMode3D();";
         next
@@ -191,8 +193,8 @@ value; cx; \;
     say ["#define COL_INTERVAL "col_interval];
     nl;
     say ["void "routine"(void)"];
-    scope
-        (\next
+	scope
+        (
         say ["const int screenWidth = "screenWidth";"];
         say ["const int screenHeight = "screenHeight";"];
         say "Camera camera = { 0 };";
@@ -221,8 +223,8 @@ value; cx; \;
         say "// Main game loop";
         say ["while (!WindowShouldClose())"
             " // Detect window close button or ESC key"];
-        scope
-            (\next
+		scope
+            (
             # say "UpdateCamera(&camera);";
                         ManuLogic "assign";
                         CameraInteractor ["0.0" "0.1" "0.1"] ["0.06" "0.0" "0.0"];
@@ -236,25 +238,25 @@ value; cx; \;
             InfoDisplay "generate";
             nl;
             say "EndDrawing();";
-            next
+			end
             );
         nl;
         say "CloseWindow(); // Close window and OpenGL context";
         say "return;";
-        next
+		end
         );
     nl;
-    next
+	next
     )
 
 \gen_main==
 	(\routine\next
 	say "int main(void)";
 	scope
-		(\next
+		(
 		say [""routine"();"];
 		say "return 0;";
-		next
+		end
 		);
 	next
 	)
@@ -263,8 +265,8 @@ value; cx; \;
 \gen_source==
     (
     \routine=="ray_win_display"
-    gen_cube_demo routine;
-    gen_main routine;
+	gen_cube_demo routine;
+	gen_main routine;
     end
     )
 

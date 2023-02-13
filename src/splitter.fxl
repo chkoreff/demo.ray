@@ -97,6 +97,7 @@ is_undef source_name
 
 # (group_indent name)
 # Read lines from a named file and group by indentation level.
+# LATER 20230212 Recognize empty lines (nl) as not splitting an indent.
 \group_indent==
 	(\name
 	\lines=(read_lines name)

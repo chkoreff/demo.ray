@@ -72,15 +72,14 @@
 	slice name 0 (- pos 1)
 	)
 
-# (raylib_C run source)
-#
 # Build or run a raylib application from the given C source code.  This uses
 # the name of the currently running script to establish a place in the cache
 # directory to build the code.
 #
 # LATER 20230203 Automatically download and compile raylib if not present.
-\raylib_C==
-	(\local_objects\run\source
+\run_demo==
+	(\local_objects\gen_source
+	\source==(gen_source "")
 
 	\script_name=(default ""; argv 1)
 	\module=(get_module script_name)
@@ -121,17 +120,7 @@
 		file_e
 	)
 
-	if (run)
-	(
 	run_sh F (path_under dir_bin module)
-	)
-	)
-
-\run_demo==
-	(\local_objects\gen_source
-	\source==(gen_source "")
-	# Run raylib on the source code.
-	raylib_C local_objects T source
 	)
 
 \form

@@ -2,7 +2,78 @@
 \cx=(value; std; use "lib/demo.fxl")
 value; cx; \;
 
-# LATER 20230210 Use high level functions in lib/raylib.fxl.
+\DrawText==
+	(\text\posX\posY\fontSize\color\next
+	say "push_text_area(&list_text_area,";
+	indent
+		(
+		say [(quoteC text)", "posX", "posY", "fontSize", "color");"];
+		end
+		);
+	next
+	)
+
+\DrawRectangle==
+	(\posX\posY\width\height\color\next
+	say "push_rectangle(&list_rectangle,";
+	indent
+		(
+		say [posX", "posY", "width", "height", "color");"];
+		end
+		);
+	next
+	)
+
+\DrawWireRectangle==
+	(\posX\posY\width\height\color\color_wire\next
+	say "push_rectangle_l(&list_rectangle_l,";
+	indent
+		(
+		say [posX", "posY", "width", "height", "color", "color_wire");"];
+		end
+		);
+	next
+	)
+
+\DrawPlane==
+	(\centerPos\size\color\next
+	say "push_plane(&list_plane,";
+	indent
+		(
+		say [(Vector3 centerPos)","];
+		say [(Vector2 size)","];
+		say color;
+		say ");";
+		end
+		);
+	next
+	)
+
+\DrawCube==
+	(\position\width\height\length\color\next
+	say "push_cube(&list_cube,";
+	indent
+		(
+		say [(Vector3 position)","];
+		say [width", "height", "length", "color];
+		say ");";
+		end
+		);
+	next
+	)
+
+\DrawWireCube==
+	(\position\width\height\length\color\color_wire\next
+	say "push_cube_l(&list_cube_l,";
+	indent
+		(
+		say [position", "width", "height", "length","];
+		say [color", "color_wire];
+		say ");";
+		end
+		);
+	next
+	)
 
 run_demo
 [
@@ -19,7 +90,14 @@ run_demo
 "text_area.o"
 ]
 (
-say "// raylib [core] example - 3d camera first person";
+\screenWidth= "800"
+\screenHeight="450"
+
+\title=="raylib [core] example - 3d camera first person"
+\fps=="60"
+\background_color=="RAYWHITE"
+
+say ["// "title];
 say "// Copyright (c) 2015-2022 Ramon Santamaria (@raysan5)";
 nl;
 say "#include <raylib.h>";
@@ -36,9 +114,10 @@ say "#include <text_area.h>";
 nl;
 say "#include <memory.h>";
 nl;
-say "int screenWidth = 800;";
-say "int screenHeight = 450;";
-say ~ const char *title = "raylib [core] example - 3d camera first person";~;
+say ["int screenWidth = "screenWidth";"];
+say ["int screenHeight = "screenHeight";"];
+
+say ["const char *title = "(quoteC title) ";"];
 nl;
 say "Camera camera = { 0 };";
 nl;
@@ -55,166 +134,75 @@ say "struct list_text_area *list_text_area;";
 nl;
 say "// LATER 20230205 Do this configuration in Fexl using code generation";
 say "void configure_scene(void)";
-indent
+scope
 	(
-	say "{";
 	say "InitWindow(screenWidth, screenHeight, title);";
-	end
-	);
-nl;
-indent
-	(
+	nl;
 	say "// Define the camera to look into our 3d world (position, target, up vector)";
 	say "camera.position = (Vector3){ 4.0f, 2.0f, 4.0f };";
 	say "camera.target = (Vector3){ 0.0f, 1.8f, 0.0f };";
 	say "camera.up = (Vector3){ 0.0f, 1.0f, 0.0f };";
 	say "camera.fovy = 60.0f;";
 	say "camera.projection = CAMERA_PERSPECTIVE;";
-	end
-	);
-nl;
-indent
-	(
+	nl;
 	say "// Set a first person camera mode";
 	say "SetCameraMode(camera, CAMERA_FIRST_PERSON);";
-	end
-	);
-nl;
-indent
-	(
-	say "SetTargetFPS(60); // Set our game to run at 60 frames-per-second";
-	end
-	);
-nl;
-indent
-	(
-	say "background_color = RAYWHITE;";
-	end
-	);
-nl;
-indent
-	(
-	say "push_text_area(&list_text_area,";
-	indent
-		(
-		say ~ "First person camera default controls:", 20, 20, 10, BLACK);~;
-		end
-		);
-	say "push_text_area(&list_text_area,";
-	indent
-		(
-		say ~ "- Move with keys: W, A, S, D", 40, 40, 10, DARKGRAY);~;
-		end
-		);
-	say "push_text_area(&list_text_area,";
-	indent
-		(
-		say ~ "- Mouse move to look around", 40, 60, 10, DARKGRAY);~;
-		end
-		);
-	end
-	);
-nl;
-indent
-	(
-	say "push_rectangle_l(&list_rectangle_l,";
-	indent
-		(
-		say "10, 10, 220, 70, Fade(SKYBLUE, 0.5f), BLUE);";
-		end
-		);
-	end
-	);
-nl;
-indent
-	(
+	nl;
+	say ["SetTargetFPS("fps"); // Set our game to run at 60 frames-per-second"];
+	nl;
+	say ["background_color = "background_color";"];
+	nl;
+
+	DrawText
+		"First person camera default controls:"
+		"20" "20" "10" "BLACK"
+		;
+
+	DrawText
+		"- Move with keys: W, A, S, D"
+		"40" "40" "10" "DARKGRAY";
+
+	DrawText
+		"- Mouse move to look around"
+		"40" "60" "10" "DARKGRAY";
+
+	nl;
+
+	DrawWireRectangle "10" "10" "220" "70" (Fade "SKYBLUE" "0.5f") "BLUE";
+
+	nl;
 	say "if (0)";
-	say "{";
-	say "push_rectangle(&list_rectangle,";
-	indent
-		(
-		say "100, 80, 80, 80, RED);";
-		end
-		);
-	say "}";
+	enclose
+	(
+	DrawRectangle "100" "80" "80" "80" "RED";
 	end
 	);
-nl;
-indent
-	(
+	nl;
+
 	say "// Draw ground";
-	say "push_plane(&list_plane,";
-	indent
-		(
-		say "(Vector3){ 0.0f, 0.0f, 0.0f },";
-		say "(Vector2){ 32.0f, 32.0f },";
-		say "LIGHTGRAY";
-		say ");";
-		end
-		);
-	end
-	);
-nl;
-indent
-	(
+	DrawPlane ["0.0f" "0.0f" "0.0f"] ["32.0f" "32.0f"] "LIGHTGRAY";
+	nl;
+
 	say "// Draw a blue wall";
-	say "push_cube(&list_cube,";
-	indent
-		(
-		say "(Vector3){ -16.0f, 2.5f, 0.0f },";
-		say "1.0f, 5.0f, 32.0f, BLUE";
-		say ");";
-		end
-		);
-	end
-	);
-nl;
-indent
-	(
+	DrawCube ["-16.0f" "2.5f" "0.0f"] "1.0f" "5.0f" "32.0f" "BLUE";
+	nl;
+
 	say "// Draw a green wall";
-	say "push_cube(&list_cube,";
-	indent
-		(
-		say "(Vector3){ 16.0f, 2.5f, 0.0f },";
-		say "1.0f, 5.0f, 32.0f, LIME";
-		say ");";
-		end
-		);
-	end
-	);
-nl;
-indent
-	(
+	DrawCube [ "16.0f" "2.5f" "0.0f" ] "1.0f" "5.0f" "32.0f" "LIME";
+	nl;
+
 	say "// Draw a yellow wall";
-	say "push_cube(&list_cube,";
-	indent
-		(
-		say "(Vector3){ 0.0f, 2.5f, 16.0f },";
-		say "32.0f, 5.0f, 1.0f, GOLD";
-		say ");";
-		end
-		);
-	end
-	);
-nl;
-indent
+	DrawCube [ "0.0f" "2.5f" "16.0f" ] "32.0f" "5.0f" "1.0f" "GOLD";
+	nl;
+
+	enclose
 	(
-	say "{";
 	say "// Generate some random columns.";
 	say "for (int i = 0; i < 20; i++)";
-	indent
+	scope
 		(
-		say "{";
 		say "float height = (float)GetRandomValue(1, 12);";
-		end
-		);
-	end
-	);
-nl;
-indent
-	(
-	indent
-		(
+		nl;
 		say "Vector3 position = (Vector3)";
 		indent
 			(
@@ -225,15 +213,7 @@ indent
 			say "};";
 			end
 			);
-		end
-		);
-	end
-	);
-nl;
-indent
-	(
-	indent
-		(
+		nl;
 		say "Color color = (Color)";
 		indent
 			(
@@ -244,180 +224,87 @@ indent
 			say "};";
 			end
 			);
+		nl;
+
+		DrawWireCube "position" "2.0f" "height" "2.0f" "color" "MAROON";
 		end
 		);
 	end
 	);
-nl;
-indent
-	(
-	indent
-		(
-		say "push_cube_l(&list_cube_l,";
-		indent
-			(
-			say "position, 2.0f, height, 2.0f,";
-			say "color, MAROON";
-			say ");";
-			end
-			);
-		say "}";
-		end
-		);
-	say "}";
-	say "}";
 	end
 	);
 nl;
 say "void run_scene(void)";
-indent
+scope
 	(
-	say "{";
 	say "list_cube = 0;";
 	say "list_cube_l = 0;";
-	end
-	);
-nl;
-indent
-	(
+	nl;
 	say "list_rectangle = 0;";
 	say "list_rectangle_l = 0;";
-	end
-	);
-nl;
-indent
-	(
+	nl;
 	say "list_plane = 0;";
 	say "list_text_area = 0;";
-	end
-	);
-nl;
-indent
-	(
+	nl;
 	say "configure_scene();";
-	end
-	);
-nl;
-indent
-	(
-	say "while (!WindowShouldClose()) // Detect window close button or ESC key";
-	indent
+	nl;
+	say ["while (!WindowShouldClose())"
+		" // Detect window close button or ESC key"];
+	scope
 		(
-		say "{";
 		say "UpdateCamera(&camera);";
 		say "BeginDrawing();";
-		end
-		);
-	end
-	);
-nl;
-indent
-	(
-	indent
-		(
+		nl;
 		say "ClearBackground(background_color);";
-		end
-		);
-	end
-	);
-nl;
-indent
-	(
-	indent
-		(
+		nl;
+
 		say "// Draw the 3D objects";
-		say "{";
-		say "BeginMode3D(camera);";
-		end
-		);
-	end
-	);
-nl;
-indent
-	(
-	indent
+		enclose
 		(
+		say "BeginMode3D(camera);";
+		nl;
 		say "draw_list_cube(list_cube);";
 		say "draw_list_cube_l(list_cube_l);";
 		say "draw_list_plane(list_plane);";
-		end
-		);
-	end
-	);
-nl;
-indent
-	(
-	indent
-		(
+		nl;
 		say "EndMode3D();";
-		say "}";
 		end
 		);
-	end
-	);
-nl;
-indent
-	(
-	indent
-		(
+		nl;
+
 		say "// Draw the 2D objects";
-		say "{";
+		enclose
+		(
 		say "draw_list_rectangle(list_rectangle);";
 		say "draw_list_rectangle_l(list_rectangle_l);";
 		say "draw_list_text_area(list_text_area);";
-		say "}";
 		end
 		);
-	end
-	);
-nl;
-indent
-	(
-	indent
-		(
+		nl;
+
 		say "EndDrawing();";
-		say "}";
 		end
 		);
-	end
-	);
-nl;
-indent
-	(
+	nl;
 	say "free_list_cube(list_cube);";
 	say "free_list_cube_l(list_cube_l);";
-	end
-	);
-nl;
-indent
-	(
+	nl;
 	say "free_list_rectangle(list_rectangle);";
 	say "free_list_rectangle_l(list_rectangle_l);";
-	end
-	);
-nl;
-indent
-	(
+	nl;
 	say "free_list_plane(list_plane);";
 	say "free_list_text_area(list_text_area);";
-	end
-	);
-nl;
-indent
-	(
+	nl;
 	say "CloseWindow(); // Close window and OpenGL context";
-	say "}";
 	end
 	);
 nl;
 say "int main(void)";
-indent
+scope
 	(
-	say "{";
 	say "run_scene();";
 	say "end_memory();";
 	say "return 0;";
-	say "}";
 	end
 	);
 end

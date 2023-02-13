@@ -1,15 +1,17 @@
 # Rendering C code.
 
+\enclose==
+	(\content\next
+	say "{";
+	put_block content;
+	say "}";
+	next
+	)
+
 # Indent content in a block enclosed with braces.
 \scope==
 	(\content
-	indent
-		(
-		say "{";
-		content;
-		say "}";
-		end
-		)
+	indent (enclose content end)
 	)
 
 # LATER 20230204 C quote arbitrary text, including escape chars and multi-line
@@ -17,6 +19,7 @@
 \quoteC==(\text [QU text QU])
 
 \form
+def "enclose" enclose;
 def "scope" scope;
 def "quoteC" quoteC;
 form

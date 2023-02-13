@@ -10,10 +10,17 @@
 	[(eval (. tab TAB) content); next tab]
 	)
 
+\put_block==
+	(\content
+	\next\tab
+	[(content tab); next tab]
+	)
+
 \form
 def "end" end;
 def "say" say;
 def "put" put;
 def "nl" nl;
 def "indent" indent;
+def "put_block" put_block;
 form
