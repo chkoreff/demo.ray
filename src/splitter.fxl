@@ -1,6 +1,9 @@
 #
-\cx=(value; std; use "lib/splitter.fxl")
-value; cx \;
+\cx_indent=(value; std; use "lib/indent.fxl")
+value;
+std;
+cx_indent;
+\;
 
 \source_name=(argv 2)
 is_undef source_name
@@ -108,68 +111,59 @@ is_undef source_name
 
 # Walk the data returned from group_indent.
 \walk==
-	(\do_end\do_nl\do_say\do_indent
+	(\do_nl\do_say\do_indent
 	@\loop\list
-	list do_end \item\tail
-	\next
+	list () \item\tail
 	(
 	item \is_leaf
 	is_leaf
 		(\line eq line "" do_nl (do_say line))
 		(do_indent loop)
 	);
-	loop tail next
+	loop tail
 	)
 
 # Translate group_indent data into the original source.
 \gen_original=
 	(
 	walk
-		()
 		nl
 		say
 		(\loop\rows
-		indent (loop rows end))
+		indent (loop rows)
 		)
+	)
 
 # Translate group_indent data into a Fexl function which generates the original
 # source.
 \gen_fexl=
 	(
 	walk
-		(say "end")
-		(say "nl;")
-		(\line say ["say "(fexl_quote line)";"])
-		(\loop\rows\next
-		say "indent";
+		(say "nl")
+		(\line say ["say "(fexl_quote line)])
+		(\loop\rows
+		say "indent"
 		indent
 			(
-			say "(";
-			loop rows;
-			say ");";
-			end
-			);
-		next
+			say "("
+			loop rows
+			say ")"
+			)
 		)
 	)
 
 # Parenthesize the Fexl function.
 \gen_fexl==
-	(\data\next
-	say "(";
-	gen_fexl data;
-	say ")";
-	next
+	(\data
+	say "("
+	gen_fexl data
+	say ")"
 	)
 
 \data=(group_indent source_name)
 
-#show_benchmark;
-to_stdout
-	(
-	#say "reproduced source:";
-	#gen_original data;
-	#say "Fexl function:";
-	gen_fexl data;
-	end
-	)
+#say "reproduced source:"
+#gen_original data
+
+#say "Fexl function:"
+gen_fexl data

@@ -1,0 +1,56 @@
+#
+\DrawText==
+	(\text\posX\posY\fontSize\color
+	say ["DrawText("(quoteC text)", "posX", "posY", "fontSize", "color");"]
+	)
+
+\DrawRectangle==
+	(\posX\posY\width\height\color
+	say ["DrawRectangle( "posX", "posY", "width", "height", "color");"]
+	)
+
+\DrawWireRectangle==
+	(\posX\posY\width\height\color\color_wire
+	DrawRectangle posX posY width height color
+	say ["DrawRectangleLines( "posX", "posY", "width", "height", "
+		color_wire");"]
+	)
+
+\DrawPlane==
+	(\centerPos\size\color
+	say "DrawPlane("
+	indent
+		(
+		say [(Vector3 centerPos)","]
+		say [(Vector2 size)","]
+		say color
+		say ");"
+		)
+	)
+
+\DrawCube==
+	(\position\width\height\length\color
+	say "DrawCube("
+	indent
+		(
+		say [(Vector3 position)","]
+		say [width", "height", "length", "color]
+		say ");"
+		)
+	)
+
+\DrawWireCube==
+	(\position\width\height\length\color\color_wire
+	say ["DrawCube("position", "width", "height", "length", "color");"]
+	say ["DrawCubeWires("position", "width", "height", "length", "
+		color_wire");"]
+	)
+
+\form
+def "DrawText" DrawText;
+def "DrawRectangle" DrawRectangle;
+def "DrawWireRectangle" DrawWireRectangle;
+def "DrawPlane" DrawPlane;
+def "DrawCube" DrawCube;
+def "DrawWireCube" DrawWireCube;
+form

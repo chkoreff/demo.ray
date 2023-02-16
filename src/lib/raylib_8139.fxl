@@ -1,0 +1,38 @@
+# Display raylib types and routines.
+
+# LATER 20230204 Define list_length in C.
+
+# LATER 20230204 Keep a running list of errors and display at the end.
+# LATER 20230204 Could also check valid numbers.
+\split_vec==
+	(\vec\type\len
+	not (is_list vec)
+		(error ["ERROR: "type" is not a list"]);
+	ne len (list_length vec)
+		(error ["ERROR: "type" is not length "len": "(as_str vec)]);
+	list_to_tuple vec
+	)
+
+\Vector3==
+	(\vec
+	split_vec vec "Vector3" 3 \x\y\z
+	["(Vector3){ "x", "y", "z" }"]
+	)
+
+\Vector2==
+	(\vec
+	split_vec vec "Vector2" 2 \x\y
+	["(Vector2){ "x", "y" }"]
+	)
+
+\Fade==
+	(\color\alpha
+	["Fade("color", "alpha")"]
+	)
+
+\form
+def "split_vec" split_vec;
+def "Vector3" Vector3;
+def "Vector2" Vector2;
+def "Fade" Fade;
+form
