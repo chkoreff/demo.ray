@@ -56,7 +56,6 @@ value; cx; \;
 	say "struct list_plane *list_plane;"
 	say "struct list_text_area *list_text_area;"
 	nl
-	say "// LATER 20230205 Do this configuration in Fexl using code generation"
 	say "void configure_scene(void)"
 	scope
 		(

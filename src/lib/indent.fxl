@@ -21,12 +21,6 @@
 # Slide over to the current tab stop.
 \tab==(put (var_get v_tab))
 
-# LATER 20230216 Defined var_putf which does not evaluate the value put into
-# the var.  Then I could use these:
-#
-#   var_put v_nl (fnl fh)
-#   \nl==(var_get v_nl)
-
 # Redirect output functions to a file handle.
 \set_output_fh==
 	(\fh
