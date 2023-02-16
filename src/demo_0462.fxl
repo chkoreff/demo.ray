@@ -2,6 +2,25 @@
 \cx=(value; std; use "lib/demo.fxl")
 value; cx; \;
 
+
+\BuildControlEvents==
+    (\list
+    ["(" (join_list " || "; map (\key ["IsKeyDown(" key ")"]) list) ")" ]
+)
+
+\KeyControlEvent==
+    (\id
+     eq id "shiftUp"
+     (BuildControlEvents ["KEY_W" "KEY_UP"    "KEY_KP_8"]);
+     eq id "shiftDown"
+     (BuildControlEvents ["KEY_S" "KEY_DOWN"  "KEY_KP_2"]);
+     eq id "shiftLeft"
+     (BuildControlEvents ["KEY_A" "KEY_LEFT"  "KEY_KP_4"]);
+     eq id "shiftRight"
+     (BuildControlEvents ["KEY_D" "KEY_RIGHT" "KEY_KP_6"]);
+     void
+)
+
 \ManuLogic==
     (\point\next
       eq point "head"
@@ -14,12 +33,13 @@ value; cx; \;
       );
       eq point "assign"
       (
-          say "manuY = (IsKeyDown(KEY_DOWN))   ? 1.0f : (IsKeyDown(KEY_UP))  ? -1.0f : 0.0f;";
-          say "manuZ = (IsKeyDown(KEY_LEFT)) ? -1.0f : (IsKeyDown(KEY_RIGHT)) ? 1.0f : 0.0f;";
+          say ["manuY = (" (KeyControlEvent "shiftDown") ") ? 1.0f : ("
+               (KeyControlEvent "shiftUp") ")  ? -1.0f : 0.0f;"];
+          say ["manuZ = (" (KeyControlEvent "shiftLeft") ") ? -1.0f : ("
+               (KeyControlEvent "shiftRight") ") ? 1.0f : 0.0f;"];
           say ["manuBoundFactor.y = "
                "(manuY > 0) ? (fmax(0.0,(1.0 - (0.4 * (camera.position.y - 4.0))))) : "
                "(manuY < 0) ? (fmax(0.0,(1.0 + (0.4 * (camera.position.y - 4.0))))) : 1.0;"];
-               # "(manuZ > 0) ? (fmax(0.0,(10.0 - (fmax(0.0,camera.position.z-1.0) / 2.0))) / 10) : "
           say ["manuBoundFactor.z = "
                "(manuZ > 0) ? (fmax(0.0,(1.0 - (0.1 * camera.position.z)))) : "
                "(manuZ < 0) ? (fmax(0.0,(1.0 + (0.1 * camera.position.z)))) : "
@@ -201,7 +221,11 @@ value; cx; \;
         say ["Vector3 startPosition = "(Vector3 camera_position)";"];
         nl;
         ColumnsLogic "head";
-                ManuLogic "head";
+        ManuLogic "head";
+
+        say "/*";
+        # BuildControlEvents ["1" "2" "3"];
+        say "*/";
         nl;
         say "InitWindow(screenWidth, screenHeight,";
         say ~ "raylib [core] example - 3d camera first person"~;
