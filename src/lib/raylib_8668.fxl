@@ -14,6 +14,7 @@
 	DrawRectangle posX posY width height color
 	say ["DrawRectangleLines( "posX", "posY", "width", "height", "
 		color_wire");"]
+	nl
 	)
 
 \DrawPlane==
@@ -26,6 +27,7 @@
 		say color
 		say ");"
 		)
+	nl
 	)
 
 \DrawCube==
@@ -37,6 +39,7 @@
 		say [width", "height", "length", "color]
 		say ");"
 		)
+	nl
 	)
 
 \DrawWireCube==
