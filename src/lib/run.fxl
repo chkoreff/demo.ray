@@ -1,4 +1,41 @@
 #
+\cx_indent=(value; std; use "lib/indent.fxl")
+
+# Context which defines formatted output routines.
+\cx_gen=
+	(
+	# Basic output rendering with C enhancements.
+	\cx_render=
+		(
+		\cx_C=(value; std; cx_indent; use "lib/C.fxl")
+		\form
+		std;
+		cx_indent;
+		cx_C;
+		form
+		)
+	# Common raylib routines.
+	\cx_8139=(value; cx_render; use "lib/raylib_8139.fxl")
+	# Display raylib types and routine calls.
+	\cx_raylib=(value; cx_render; cx_8139; use name_extension)
+
+	\form
+	cx_render;
+	cx_8139;
+	cx_raylib;
+	form
+	)
+
+\cx_proc=(value; std; use "lib/proc.fxl")
+
+value;
+std;
+cx_indent;
+cx_proc;
+def "local_objects" local_objects;
+def "cx_gen" cx_gen;
+\;
+
 \raylib_objects==
 [
 "rcore.o"
@@ -19,11 +56,12 @@
 \dir_src=(path_under dir_root "cache/src")
 \dir_obj=(path_under dir_root "cache/obj")
 
+# Generate a C source file.
 \do_gen_C==
-	(\source\file_c
+	(\content\file_c
 	create_parent_directory file_c
 	\fh=(fopen file_c "w")
-	fput fh source
+	(use_output_fh fh; content)
 	fclose fh
 	)
 
@@ -49,7 +87,7 @@
 	)
 
 # Find position of the last "." in name, if any.
-\find_suffix=
+\find_suffix==
 	(\name
 	\pos=(search name "." 0)
 	is_void pos pos;
@@ -64,7 +102,7 @@
 	)
 
 # Extract the logical module from a script name.
-\get_module=
+\get_module==
 	(\name
 	\name=(basename name) # Doesn't matter how we got here.
 	\pos=(find_suffix name)
@@ -72,14 +110,16 @@
 	slice name 0 (- pos 1)
 	)
 
+# Print the demo output to stdout.
+\put_demo==(use_output_fh stdout)
+
 # Build or run a raylib application from the given C source code.  This uses
 # the name of the currently running script to establish a place in the cache
 # directory to build the code.
 #
 # LATER 20230203 Automatically download and compile raylib if not present.
 \run_demo==
-	(\local_objects\gen_source
-	\source==(gen_source "")
+	(\content
 
 	\script_name=(default ""; argv 1)
 	\module=(get_module script_name)
@@ -94,7 +134,7 @@
 	\file_c=(path_under dir_src; . module ".c")
 	\file_o=(path_under dir_obj; . module ".o")
 
-	do_gen_C source file_c
+	do_gen_C content file_c
 	do_compile file_c file_o
 
 	\objects=
@@ -124,5 +164,8 @@
 	)
 
 \form
+std;
+cx_gen;
+def "put_demo" put_demo;
 def "run_demo" run_demo;
 form
