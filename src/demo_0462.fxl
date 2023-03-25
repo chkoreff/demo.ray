@@ -2,6 +2,64 @@
 \cx=(value; std; use "lib/run_1613.fxl")
 value; cx; \;
 
+\cconvRgbToXyz==(\color
+        color \rx\gx\bx
+        \vr=(/ rx 255)
+        \vg=(/ gx 255)
+        \vb=(/ bx 255)
+        (gt vr 0.04045)
+        (\vr=(^ (/ (+ vr 0.055) 1.055) 2.4))
+        (\vr=(/ vr 12.92));
+        (gt vg 0.04045)
+        (\vg=(^ (/ (+ vg 0.055) 1.055) 2.4))
+        (\vg=(/ vg 12.92));
+        (gt vb 0.04045)
+        (\vb=(^ (/ (+ vb 0.055) 1.055) 2.4))
+        (\vb=(/ vb 12.92));
+
+        \vr=(* vr 100);
+        \vg=(* vg 100);
+        \vb=(* vb 100);
+        {vr vg vb}
+)
+
+\cconvLabToXyz==(\color
+        color \lx\ax\bx
+        \vy=(/ (+ lx 16) 116)
+        \vx=(/ ax (+ 500 vy))
+        \vz=(- vy (/ bx 200))
+        (gt (^ vy 3) 0.00856)
+        (\vy=(^ vy 3))
+        (\vy=(/ (- vy (/ 16 116)) 7.787));
+        (gt (^ vx 3) 0.00856)
+        (\vx=(^ vx 3))
+        (\vx=(/ (- vx (/ 16 116)) 7.787));
+        (gt (^ vz 3) 0.00856)
+        (\vz=(^ vz 3))
+        (\vz=(/ (- vz (/ 16 116)) 7.787));
+        {vx vy vz}
+)
+
+\cconvXyzToRgb==(\color
+        color \xx\yx\zx
+        \vx=(/ xx 100)
+        \vy=(/ yx 100)
+        \vz=(/ zx 100)
+        \vr=(+ (* vx  3.2406) (* vy -1.5372) (* vz -0.4986))
+        \vg=(+ (* vx -0.9689) (* vy  1.8758) (* vz  0.0415))
+        \vb=(+ (* vx  0.0557) (* vy -0.2040) (* vz  1.0570))
+        (gt vr 0.0031308)
+        (\vr=(* 1.055 (- (^ vr (/ 1 2.4)) 0.055)))
+        (\vr=(* vr 12.92));
+        (gt vg 0.0031308)
+        (\vg=(* 1.055 (- (^ vg (/ 1 2.4)) 0.055)))
+        (\vg=(* vg 12.92));
+        (gt vb 0.0031308)
+        (\vb=(* 1.055 (- (^ vb (/ 1 2.4)) 0.055)))
+        (\vb=(* vb 12.92));
+        {(* vr 255) (* vg 255) (* vb 255)}
+)
+
 \BuildControlEvents==
 	(\list
 	["(" (join_list " || "; map (\key ["IsKeyDown(" key ")"]) list) ")" ]
@@ -210,6 +268,8 @@ value; cx; \;
 		nl
 		ColumnsLogic "head"
 		ManuLogic "head"
+                say "//abcde"
+		say ["/*" (map (\c ; \pt=(cconvRgbToXyz c) ; pt \x\y\z ; [x " " y " " z]) [{85 67 89}]) "*/"]
 
 		say "/*"
 		# BuildControlEvents ["1" "2" "3"]
