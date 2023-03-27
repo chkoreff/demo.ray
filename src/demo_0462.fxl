@@ -2,6 +2,26 @@
 \cx=(value; std; use "lib/run_1613.fxl")
 value; cx; \;
 
+\map_count==
+    (\f
+    (@\loop\i\xs
+    xs [] \x\xs
+    \x=(f i x)
+    \i=(+ 1 i)
+    [x; loop i xs]
+    ) 0 
+)
+
+\assign_numbers==
+    (
+    (@\loop\i\xs
+    xs [] \x\xs
+    \x=={i x}
+    \i=(+ 1 i)
+    [x; loop i xs]
+    ) 0
+    )
+
 \cconvRgbToXyz==(\color
         color \rx\gx\bx
         \vr=(/ rx 255)
@@ -59,6 +79,25 @@ value; cx; \;
         (\vb=(* vb 12.92));
         {(* vr 255) (* vg 255) (* vb 255)}
 )
+
+\cconvLabToRgb==(\color
+   cconvXyzToRgb (cconvLabToXyz color))
+
+\BuildColorEntry==(\index\value
+        \pt=(cconvLabToRgb value)
+        pt \rx\gx\bx
+        ["colors[" index "] = (Color){" rx "," gx "," bx ",255};"]
+)
+
+# \BuildColorEntry==(\index\value
+#         \pt=(cconvRgbToXyz value)
+#         pt \rx\gx\bx
+#         say ["colors[" index "] = (Color)"]
+#         indent
+#         (
+#         say ["{" rx "," gx "," bx ",255};"]
+#         )
+# )
 
 \BuildControlEvents==
 	(\list
@@ -268,8 +307,12 @@ value; cx; \;
 		nl
 		ColumnsLogic "head"
 		ManuLogic "head"
-                say "//abcde"
-		say ["/*" (map (\c ; \pt=(cconvRgbToXyz c) ; pt \x\y\z ; [x " " y " " z]) [{85 67 89}]) "*/"]
+		say "/*"
+                say (map BuildColorEntry (assign_numbers [{85 12 6}]))
+                say "*/"
+		# say ["/*"
+                #      (map (\c ; \pt=(cconvRgbToXyz c) ; pt \x\y\z ; [x " " y " " z]) [{85 67 89}])
+                #      "*/"]
 
 		say "/*"
 		# BuildControlEvents ["1" "2" "3"]
