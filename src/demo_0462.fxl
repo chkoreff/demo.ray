@@ -2,16 +2,6 @@
 \cx=(value; std; use "lib/run_1613.fxl")
 value; cx; \;
 
-\map_count==
-    (\f
-    (@\loop\i\xs
-    xs [] \x\xs
-    \x=(f i x)
-    \i=(+ 1 i)
-    [x; loop i xs]
-    ) 0 
-)
-
 \assign_numbers==
     (
     (@\loop\i\xs
@@ -22,82 +12,116 @@ value; cx; \;
     ) 0
     )
 
-\cconvRgbToXyz==(\color
-        color \rx\gx\bx
-        \vr=(/ rx 255)
-        \vg=(/ gx 255)
-        \vb=(/ bx 255)
-        (gt vr 0.04045)
-        (\vr=(^ (/ (+ vr 0.055) 1.055) 2.4))
-        (\vr=(/ vr 12.92));
-        (gt vg 0.04045)
-        (\vg=(^ (/ (+ vg 0.055) 1.055) 2.4))
-        (\vg=(/ vg 12.92));
-        (gt vb 0.04045)
-        (\vb=(^ (/ (+ vb 0.055) 1.055) 2.4))
-        (\vb=(/ vb 12.92));
+# Set this T to run normally, otherwise show trace output and halt.
+# LATER Once everything is stable you can eliminate the flag and everything
+# that depends on it.
+\run_normally==F # TODO
 
-        \vr=(* vr 100);
-        \vg=(* vg 100);
-        \vb=(* vb 100);
-        {vr vg vb}
-)
+# Make a version of f that traces input and output.
+\make_tracer==
+	(\name\f
+	run_normally f
+	\in
+	\in=in # force eval
+	\out=(f in)
+	trace_data
+		[
+		name
+		["in" in]
+		["out" out]
+		]
+	out
+	)
 
-\cconvLabToXyz==(\color
-        color \lx\ax\bx
-        \vy=(/ (+ lx 16) 116)
-        \vx=(/ ax (+ 500 vy))
-        \vz=(- vy (/ bx 200))
-        (gt (^ vy 3) 0.00856)
-        (\vy=(^ vy 3))
-        (\vy=(/ (- vy (/ 16 116)) 7.787));
-        (gt (^ vx 3) 0.00856)
-        (\vx=(^ vx 3))
-        (\vx=(/ (- vx (/ 16 116)) 7.787));
-        (gt (^ vz 3) 0.00856)
-        (\vz=(^ vz 3))
-        (\vz=(/ (- vz (/ 16 116)) 7.787));
-        {vx vy vz}
-)
+\cconvRgbToXyz==
+	(
+	\scale==
+		(\v
+		\v=(/ v 255)
+		* 100;
+		gt v 0.04045
+			(^ (/ (+ v 0.055) 1.055) 2.4)
+			(/ v 12.92)
+		)
 
-\cconvXyzToRgb==(\color
-        color \xx\yx\zx
-        \vx=(/ xx 100)
-        \vy=(/ yx 100)
-        \vz=(/ zx 100)
-        \vr=(+ (* vx  3.2406) (* vy -1.5372) (* vz -0.4986))
-        \vg=(+ (* vx -0.9689) (* vy  1.8758) (* vz  0.0415))
-        \vb=(+ (* vx  0.0557) (* vy -0.2040) (* vz  1.0570))
-        (gt vr 0.0031308)
-        (\vr=(* 1.055 (- (^ vr (/ 1 2.4)) 0.055)))
-        (\vr=(* vr 12.92));
-        (gt vg 0.0031308)
-        (\vg=(* 1.055 (- (^ vg (/ 1 2.4)) 0.055)))
-        (\vg=(* vg 12.92));
-        (gt vb 0.0031308)
-        (\vb=(* 1.055 (- (^ vb (/ 1 2.4)) 0.055)))
-        (\vb=(* vb 12.92));
-        {(* vr 255) (* vg 255) (* vb 255)}
-)
+	\color
+	color \rx\gx\bx
 
-\cconvLabToRgb==(\color
-   cconvXyzToRgb (cconvLabToXyz color))
+	\vr=(scale rx)
+	\vg=(scale gx)
+	\vb=(scale bx)
 
-\BuildColorEntry==(\index\value
-        \pt=(cconvLabToRgb value)
-        pt \rx\gx\bx
-        ["colors[" index "] = (Color){" rx "," gx "," bx ",255};"]
-)
+	{vr vg vb}
+	)
 
-# \BuildColorEntry==(\index\value
-#         \pt=(cconvRgbToXyz value)
-#         pt \rx\gx\bx
-#         say ["colors[" index "] = (Color)"]
-#         indent
-#         (
-#         say ["{" rx "," gx "," bx ",255};"]
-#         )
-# )
+# \cconvRgbToXyz=(make_tracer "cconvRgbToXyz" cconvRgbToXyz)
+
+\cconvLabToXyz==
+	(
+	\scale==
+		(\v
+		\v3=(^ v 3)
+		gt v3 0.00856
+			v3
+			(/ (- v (/ 16 116)) 7.787)
+		)
+
+	\color
+	color \lx\ax\bx
+
+	\vy=(/ (+ lx 16) 116)
+	\vx=(+ vy (/ ax 500))
+	\vz=(- vy (/ bx 200))
+
+	\vx=(* 94.811 (scale vx))
+	\vy=(* 100 (scale vy))
+	\vz=(* 107.304 (scale vz))
+
+	{vx vy vz}
+	)
+
+# \cconvLabToXyz=(make_tracer "cconvLabToXyz" cconvLabToXyz)
+
+\cconvXyzToRgb==
+	(
+	\scale==
+		(\v
+		* 255;
+		gt v 0.0031308
+			(* 1.055 (- (^ v (/ 1 2.4)) 0.055))
+			(* v 12.92)
+		)
+
+	\color
+	color \xx\yx\zx
+
+	\vx=(/ xx 100)
+	\vy=(/ yx 100)
+	\vz=(/ zx 100)
+
+	\vr=(ceil (scale; + (* vx  3.2406); + (* vy -1.5372) (* vz -0.4986)))
+	\vg=(ceil (scale; + (* vx -0.9689); + (* vy  1.8758) (* vz  0.0415)))
+	\vb=(ceil (scale; + (* vx  0.0557); + (* vy -0.2040) (* vz  1.0570)))
+
+	{vr vg vb}
+	)
+
+# \cconvXyzToRgb=(make_tracer "cconvXyzToRgb" cconvXyzToRgb)
+
+\cconvLabToRgb==
+	(\color
+	cconvXyzToRgb;
+	cconvLabToXyz color
+	)
+
+# \cconvLabToRgb=(make_tracer "cconvLabToRgb" cconvLabToRgb)
+
+\BuildColorEntry==
+	(\pair
+	pair \index\value
+	cconvLabToRgb value \rx\gx\bx
+	["colors[" index "] = (Color){" rx "," gx "," bx ",255};" NL]
+	)
 
 \BuildControlEvents==
 	(\list
@@ -173,16 +197,16 @@ value; cx; \;
 				say "(float)GetRandomValue(-15, 15)"
 				say "};"
 				)
-			nl
-			say "colors[i] = (Color)"
-			indent
-				(
-				say "{"
-				say "GetRandomValue(20, 255),"
-				say "GetRandomValue(10, 55),"
-				say "30, 255"
-				say "};"
-				)
+			# nl
+			# say "colors[i] = (Color)"
+			# indent
+			# 	(
+			# 	say "{"
+			# 	say "GetRandomValue(20, 255),"
+			# 	say "GetRandomValue(10, 55),"
+			# 	say "30, 255"
+			# 	say "};"
+			# 	)
 			)
 		say "colsOffset = (colsOffset + COL_INTERVAL) % MAX_COLUMNS;"
 		);
@@ -307,12 +331,53 @@ value; cx; \;
 		nl
 		ColumnsLogic "head"
 		ManuLogic "head"
-		say "/*"
-                say (map BuildColorEntry (assign_numbers [{85 12 6}]))
-                say "*/"
-		# say ["/*"
-                #      (map (\c ; \pt=(cconvRgbToXyz c) ; pt \x\y\z ; [x " " y " " z]) [{85 67 89}])
-                #      "*/"]
+
+		say (map BuildColorEntry
+                         (assign_numbers [{88 12 6}
+                                          {84 10 7}
+                                          {80 8 8}
+                                          {76 6 9}
+                                          {72 4 10}
+                                          {68 2 11}
+                                          {64 0 12}
+                                          {60 -2 13}
+                                          {56 -4 14}
+                                          {52 -6 15}
+                                          {88 12 6}
+                                          {84 10 7}
+                                          {80 8 8}
+                                          {76 6 9}
+                                          {72 4 10}
+                                          {68 2 11}
+                                          {64 0 12}
+                                          {60 -2 13}
+                                          {56 -4 14}
+                                          {52 -6 15}
+                                          {88 12 6}
+                                          {84 10 7}
+                                          {80 8 8}
+                                          {76 6 9}
+                                          {72 4 10}
+                                          {68 2 11}
+                                          {64 0 12}
+                                          {60 -2 13}
+                                          {56 -4 14}
+                                          {52 -6 15}
+                                          {88 12 6}
+                                          {84 10 7}
+                                          {80 8 8}
+                                          {76 6 9}
+                                          {72 4 10}
+                                          {68 2 11}
+                                          {64 0 12}
+                                          {60 -2 13}
+                                          {56 -4 14}
+                                          {52 -6 15}
+                                          # {}
+                                          # {}
+                                          ]))
+
+		# run_normally () (error "HALT")
 
 		say "/*"
 		# BuildControlEvents ["1" "2" "3"]
