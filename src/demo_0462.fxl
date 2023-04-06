@@ -12,6 +12,19 @@ value; cx; \;
     ) 0
     )
 
+\scale_iterate==
+    (@\loop\a\ad\b\bd\c\cd\ct
+    (eq ct 0)
+    []
+    [{a b c}; loop (+ a ad) ad (+ b bd) bd (+ c cd) cd (- ct 1)]
+    )
+
+\random_int==
+    (\N
+    trunc;
+    * N rand
+    )
+
 # Set this T to run normally, otherwise show trace output and halt.
 # LATER Once everything is stable you can eliminate the flag and everything
 # that depends on it.
@@ -54,7 +67,7 @@ value; cx; \;
 	{vr vg vb}
 	)
 
-\cconvRgbToXyz=(make_tracer "cconvRgbToXyz" cconvRgbToXyz)
+# \cconvRgbToXyz=(make_tracer "cconvRgbToXyz" cconvRgbToXyz)
 
 \cconvLabToXyz==
 	(
@@ -70,17 +83,17 @@ value; cx; \;
 	color \lx\ax\bx
 
 	\vy=(/ (+ lx 16) 116)
-	\vx=(/ ax (+ 500 vy))
+	\vx=(+ vy (/ ax 500))
 	\vz=(- vy (/ bx 200))
 
-	\vy=(scale vy)
-	\vx=(scale vx)
-	\vz=(scale vz)
+	\vx=(* 94.811 (scale vx))
+	\vy=(* 100 (scale vy))
+	\vz=(* 107.304 (scale vz))
 
 	{vx vy vz}
 	)
 
-\cconvLabToXyz=(make_tracer "cconvLabToXyz" cconvLabToXyz)
+# \cconvLabToXyz=(make_tracer "cconvLabToXyz" cconvLabToXyz)
 
 \cconvXyzToRgb==
 	(
@@ -99,14 +112,14 @@ value; cx; \;
 	\vy=(/ yx 100)
 	\vz=(/ zx 100)
 
-	\vr=(scale; + (* vx  3.2406); + (* vy -1.5372) (* vz -0.4986))
-	\vg=(scale; + (* vx -0.9689); + (* vy  1.8758) (* vz  0.0415))
-	\vb=(scale; + (* vx  0.0557); + (* vy -0.2040) (* vz  1.0570))
+	\vr=(ceil (scale; + (* vx  3.2406); + (* vy -1.5372) (* vz -0.4986)))
+	\vg=(ceil (scale; + (* vx -0.9689); + (* vy  1.8758) (* vz  0.0415)))
+	\vb=(ceil (scale; + (* vx  0.0557); + (* vy -0.2040) (* vz  1.0570)))
 
 	{vr vg vb}
 	)
 
-\cconvXyzToRgb=(make_tracer "cconvXyzToRgb" cconvXyzToRgb)
+# \cconvXyzToRgb=(make_tracer "cconvXyzToRgb" cconvXyzToRgb)
 
 \cconvLabToRgb==
 	(\color
@@ -114,7 +127,7 @@ value; cx; \;
 	cconvLabToXyz color
 	)
 
-\cconvLabToRgb=(make_tracer "cconvLabToRgb" cconvLabToRgb)
+# \cconvLabToRgb=(make_tracer "cconvLabToRgb" cconvLabToRgb)
 
 \BuildColorEntry==
 	(\pair
@@ -197,16 +210,16 @@ value; cx; \;
 				say "(float)GetRandomValue(-15, 15)"
 				say "};"
 				)
-			nl
-			say "colors[i] = (Color)"
-			indent
-				(
-				say "{"
-				say "GetRandomValue(20, 255),"
-				say "GetRandomValue(10, 55),"
-				say "30, 255"
-				say "};"
-				)
+			# nl
+			# say "colors[i] = (Color)"
+			# indent
+			# 	(
+			# 	say "{"
+			# 	say "GetRandomValue(20, 255),"
+			# 	say "GetRandomValue(10, 55),"
+			# 	say "30, 255"
+			# 	say "};"
+			# 	)
 			)
 		say "colsOffset = (colsOffset + COL_INTERVAL) % MAX_COLUMNS;"
 		);
@@ -306,6 +319,8 @@ value; cx; \;
 
 	\max_columns=="40"
 	\col_interval=="20"
+        \color_dir1==(eq 0 (random_int 2) -1 1)
+        \color_dir2==(eq 0 (random_int 2) -1 1)
 
 	\routine
 
@@ -332,28 +347,14 @@ value; cx; \;
 		ColumnsLogic "head"
 		ManuLogic "head"
 
-		say "/*"
-		say (map BuildColorEntry (assign_numbers [{85 12 6}]))
-		say "*/"
+		say (map BuildColorEntry
+                         (assign_numbers (scale_iterate (* 15 rand) (* 2 rand)
+                                                        (* color_dir1 (* 8 rand))
+                                                        (* color_dir1 (* 0.1 rand))
+                                                        (* color_dir2 (* 8 rand))
+                                                        (* color_dir2 (* 0.1 rand))
+                                                        40)))
 
-		say "/*"
-		say
-			(
-			map
-				(\c
-				\pt=(cconvRgbToXyz c)
-				pt \x\y\z
-				[x " " y " " z]
-				)
-			[{85 67 89}]
-			)
-		say "*/"
-
-		run_normally () (error "HALT")
-
-		say "/*"
-		# BuildControlEvents ["1" "2" "3"]
-		say "*/"
 		nl
 		say "InitWindow(screenWidth, screenHeight,"
 		say ~ "raylib [core] example - 3d camera first person"~
