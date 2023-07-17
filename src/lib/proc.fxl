@@ -1,4 +1,4 @@
-#use_syntax_2
+#
 \create_parent_directory=
 	(@\\loop\path
 	\parent=(dirname path)

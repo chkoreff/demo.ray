@@ -1,4 +1,3 @@
-#use_syntax_2
 # Top level library for demo scripts
 value;
 std;

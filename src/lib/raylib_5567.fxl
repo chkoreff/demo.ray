@@ -1,4 +1,4 @@
-#use_syntax_2
+#
 \DrawText=
 	(\text\posX\posY\fontSize\color
 	say "push_text_area(&list_text_area,"

@@ -1,4 +1,3 @@
-#use_syntax_2
 # Create the executable code for a raylib graphics program and run it.
 \cx=(value; std; use "lib/run_7137.fxl")
 value; cx; \;
