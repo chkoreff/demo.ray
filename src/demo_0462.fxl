@@ -1,37 +1,27 @@
+#use_syntax_2
 # Create the executable code for a raylib graphics program and run it.
 \cx=(value; std; use "lib/run_1613.fxl")
 value; cx; \;
 
-\assign_numbers==
+\\assign_numbers=
 	(
-	(@\loop\i\xs
+	(@\\loop\i\xs
 	xs [] \x\xs
-	\x=={i x}
+	\x={i x}
 	\i=(+ 1 i)
 	[x; loop i xs]
 	) 0
 	)
 
-\scale_iterate==
+\\scale_iterate=
 	(
 	\a\ad
 	\b\bd
 	\c\cd
 	\ct
 
-	\a=a \ad=ad
-	\b=b \bd=bd
-	\c=c \cd=cd
-	\ct=ct
-
-	(@\loop\a\b\c\ct
-
-	\ct=ct
+	(@\\loop\a\b\c\ct
 	le ct 0 [];
-
-	\a=a
-	\b=b
-	\c=c
 
 	[
 	{a b c};
@@ -50,17 +40,17 @@ value; cx; \;
 # random colors.  That program will not generate random colors at run time.
 
 #seed_rand random_double
-#\rand==random_double
+#\\rand=random_double
 
-\random_int==
+\random_int=
 	(\N
 	trunc;
 	* N rand
 	)
 
-\cconvRgbToXyz==
+\cconvRgbToXyz=
 	(
-	\scale==
+	\scale=
 		(\v
 		\v=(/ v 255)
 		* 100;
@@ -79,9 +69,9 @@ value; cx; \;
 	{vr vg vb}
 	)
 
-\cconvLabToXyz==
+\cconvLabToXyz=
 	(
-	\scale==
+	\scale=
 		(\v
 		\v3=(^ v 3)
 		gt v3 0.00856
@@ -103,9 +93,9 @@ value; cx; \;
 	{vx vy vz}
 	)
 
-\cconvXyzToRgb==
+\cconvXyzToRgb=
 	(
-	\scale==
+	\scale=
 		(\v
 		* 255;
 		gt v 0.0031308
@@ -127,25 +117,25 @@ value; cx; \;
 	{vr vg vb}
 	)
 
-\cconvLabToRgb==
+\cconvLabToRgb=
 	(\color
 	cconvXyzToRgb;
 	cconvLabToXyz color
 	)
 
-\BuildColorEntry==
+\BuildColorEntry=
 	(\pair
 	pair \index\value
 	cconvLabToRgb value \rx\gx\bx
 	["colors[" index "] = (Color){" rx "," gx "," bx ",255};" NL]
 	)
 
-\BuildControlEvents==
+\BuildControlEvents=
 	(\list
 	["(" (join_list " || "; map (\key ["IsKeyDown(" key ")"]) list) ")" ]
 	)
 
-\KeyControlEvent==
+\KeyControlEvent=
 	(\id
 	eq id "shiftUp"
 		(BuildControlEvents ["KEY_W" "KEY_UP"    "KEY_KP_8"]);
@@ -158,7 +148,7 @@ value; cx; \;
 	void
 	)
 
-\ManuLogic==
+\ManuLogic=
 	(\point
 	eq point "head"
 		(
@@ -184,7 +174,7 @@ value; cx; \;
 		);
 	)
 
-\ColumnsLogic==
+\ColumnsLogic=
 	(\point
 	eq point "head"
 		(
@@ -258,7 +248,7 @@ value; cx; \;
 		);
 	)
 
-\CameraInteractor==
+\CameraInteractor=
 	(\manuFactor\inertia
 
 	\manuDelta=["Vector3Multiply(manuBoundFactor,Vector3Multiply("
@@ -273,7 +263,7 @@ value; cx; \;
 	say ["camera.target = Vector3Add(camera.target,"inerDelta");"]
 	)
 
-\RenderIterate==
+\RenderIterate=
 	(\arg
 	say "if (abs(camera.position.x) > renderBound) {"
 	indent
@@ -286,7 +276,7 @@ value; cx; \;
 	say "}"
 	)
 
-\InfoDisplay==
+\InfoDisplay=
 	(\point
 	eq point "generate"
 		(
@@ -304,25 +294,25 @@ value; cx; \;
 		);
 	)
 
-\gen_cube_demo==
+\\gen_cube_demo=
 	(
-	\screenWidth=="800"
-	\screenHeight=="450"
+	\screenWidth="800"
+	\screenHeight="450"
 
-	\fps=="60"
-	#\fps=="120" # NOTE This is too fast, you can see the aliasing.
+	\fps="60"
+	#\fps="120" # NOTE This is too fast, you can see the aliasing.
 
-	\background_color=="RAYWHITE"
+	\background_color="RAYWHITE"
 
-	\camera_mode=="CAMERA_FIRST_PERSON"
-	\camera_position==["0.0" "4.0" "0.0"]
-	\camera_target==["4.0" "4.0" "0.0"]
-	\camera_up==["0.0" "1.0" "0.0"]
-	\camera_fovy=="60.0"
-	\camera_projection=="CAMERA_PERSPECTIVE"
+	\camera_mode="CAMERA_FIRST_PERSON"
+	\camera_position=["0.0" "4.0" "0.0"]
+	\camera_target=["4.0" "4.0" "0.0"]
+	\camera_up=["0.0" "1.0" "0.0"]
+	\camera_fovy="60.0"
+	\camera_projection="CAMERA_PERSPECTIVE"
 
-	\max_columns=="40"
-	\col_interval=="20"
+	\max_columns="40"
+	\col_interval="20"
 
 	\routine
 
@@ -411,7 +401,7 @@ value; cx; \;
 	nl
 	)
 
-\gen_main==
+\gen_main=
 	(\routine
 	say "int main(void)"
 	scope
@@ -422,9 +412,9 @@ value; cx; \;
 	)
 
 # Add the main program.
-\gen_source==
+\\gen_source=
 	(
-	\routine=="ray_win_display"
+	\routine="ray_win_display"
 	gen_cube_demo routine
 	gen_main routine
 	)

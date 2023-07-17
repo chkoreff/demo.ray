@@ -1,25 +1,26 @@
+#use_syntax_2
 # Create the executable code for a raylib graphics program and run it.
 \cx=(value; std; use "lib/run_1613.fxl")
 value; cx; \;
 
-\gen_cube_demo==
+\\gen_cube_demo=
 	(
-	\screenWidth=="800"
-	\screenHeight=="450"
+	\screenWidth="800"
+	\screenHeight="450"
 
-	\fps=="60"
-	#\fps=="120" # NOTE This is too fast, you can see the aliasing.
+	\fps="60"
+	#\fps="120" # NOTE This is too fast, you can see the aliasing.
 
-	\background_color=="RAYWHITE"
+	\background_color="RAYWHITE"
 
-	\camera_mode=="CAMERA_FIRST_PERSON"
-	\camera_position==["4.0" "2.0" "4.0"]
-	\camera_target==["0.0" "1.8" "0.0"]
-	\camera_up==["0.0" "1.0" "0.0"]
-	\camera_fovy=="60.0"
-	\camera_projection=="CAMERA_PERSPECTIVE"
+	\camera_mode="CAMERA_FIRST_PERSON"
+	\camera_position=["4.0" "2.0" "4.0"]
+	\camera_target=["0.0" "1.8" "0.0"]
+	\camera_up=["0.0" "1.0" "0.0"]
+	\camera_fovy="60.0"
+	\camera_projection="CAMERA_PERSPECTIVE"
 
-	\max_columns=="20"
+	\max_columns="20"
 
 	\routine
 
@@ -147,7 +148,7 @@ value; cx; \;
 	)
 
 # Generate a main program which calls a display routine.
-\gen_main==
+\gen_main=
 	(\routine
 	say "int main(void)"
 	scope
@@ -158,9 +159,9 @@ value; cx; \;
 	)
 
 # Add the main program.
-\gen_source==
+\\gen_source=
 	(
-	\routine=="ray_win_display"
+	\routine="ray_win_display"
 	gen_cube_demo routine
 	gen_main routine
 	)

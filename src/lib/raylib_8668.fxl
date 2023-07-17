@@ -1,15 +1,15 @@
-#
-\DrawText==
+#use_syntax_2
+\DrawText=
 	(\text\posX\posY\fontSize\color
 	say ["DrawText("(quoteC text)", "posX", "posY", "fontSize", "color");"]
 	)
 
-\DrawRectangle==
+\DrawRectangle=
 	(\posX\posY\width\height\color
 	say ["DrawRectangle( "posX", "posY", "width", "height", "color");"]
 	)
 
-\DrawWireRectangle==
+\DrawWireRectangle=
 	(\posX\posY\width\height\color\color_wire
 	DrawRectangle posX posY width height color
 	say ["DrawRectangleLines( "posX", "posY", "width", "height", "
@@ -17,7 +17,7 @@
 	nl
 	)
 
-\DrawPlane==
+\DrawPlane=
 	(\centerPos\size\color
 	say "DrawPlane("
 	indent
@@ -30,7 +30,7 @@
 	nl
 	)
 
-\DrawCube==
+\DrawCube=
 	(\position\width\height\length\color
 	say "DrawCube("
 	indent
@@ -42,7 +42,7 @@
 	nl
 	)
 
-\DrawWireCube==
+\DrawWireCube=
 	(\position\width\height\length\color\color_wire
 	say ["DrawCube("position", "width", "height", "length", "color");"]
 	say ["DrawCubeWires("position", "width", "height", "length", "

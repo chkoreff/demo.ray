@@ -1,3 +1,4 @@
+#use_syntax_2
 # Indented output
 
 \v_put=var_new
@@ -5,13 +6,13 @@
 \v_say=var_new
 \v_tab=var_new
 
-\put==(var_get v_put)
-\nl==(var_get v_nl ())
-\say==(var_get v_say)
+\\put=(var_get v_put)
+\\nl=(var_get v_nl ())
+\\say=(var_get v_say)
 
 # Indent content with a new tab stop.
-\indent==
-	(\content
+\indent=
+	(\\content
 	\tab=(var_get v_tab)
 	var_put v_tab (. tab TAB)
 	content
@@ -19,10 +20,10 @@
 	)
 
 # Slide over to the current tab stop.
-\tab==(put (var_get v_tab))
+\\tab=(put (var_get v_tab))
 
 # Redirect output functions to a file handle.
-\set_output_fh==
+\set_output_fh=
 	(\fh
 	var_put v_tab ""
 	var_put v_put (fput fh)
@@ -35,8 +36,8 @@
 	)
 
 # Run content with output functions sent to a file handle.
-\use_output_fh==
-	(\fh\content
+\use_output_fh=
+	(\fh\\content
 
 	\save_tab=(var_get v_tab)
 	\save_put=(var_get v_put)

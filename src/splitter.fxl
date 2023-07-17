@@ -1,4 +1,4 @@
-#
+#use_syntax_2
 \cx_indent=(value; std; use "lib/indent.fxl")
 value;
 std;
@@ -18,7 +18,7 @@ is_undef source_name
 \split_lines=
 	(\str
 
-	(@\loop\beg
+	(@\\loop\beg
 	\end=(search str NL beg)
 	is_undef end
 		(
@@ -59,7 +59,7 @@ is_undef source_name
 	(\str
 	\len=(length str)
 
-	(@\loop\pos
+	(@\\loop\pos
 	eq pos len pos;
 	\ch=(slice str pos 1)
 	ne ch TAB pos;
@@ -81,7 +81,7 @@ is_undef source_name
 # (group_by_level prev_levl list)
 # Group the list of pairs {level data} by level number.
 \group_by_level=
-	(@\loop\prev_level\list
+	(@\\loop\prev_level\list
 	list {[] []} \pair\tail
 	pair \curr_level\data
 	compare curr_level prev_level
@@ -101,7 +101,7 @@ is_undef source_name
 # (group_indent name)
 # Read lines from a named file and group by indentation level.
 # LATER 20230212 Recognize empty lines (nl) as not splitting an indent.
-\group_indent==
+\group_indent=
 	(\name
 	\lines=(read_lines name)
 	\lines=(map strip_tabs lines)
@@ -110,9 +110,9 @@ is_undef source_name
 	)
 
 # Walk the data returned from group_indent.
-\walk==
-	(\do_nl\do_say\do_indent
-	@\loop\list
+\walk=
+	(\\do_nl\\do_say\\do_indent
+	@\\loop\list
 	list () \item\tail
 	(
 	item \is_leaf
@@ -153,7 +153,7 @@ is_undef source_name
 	)
 
 # Parenthesize the Fexl function.
-\gen_fexl==
+\gen_fexl=
 	(\data
 	say "("
 	gen_fexl data

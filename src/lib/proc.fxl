@@ -1,6 +1,6 @@
-#
+#use_syntax_2
 \create_parent_directory=
-	(@\loop\path
+	(@\\loop\path
 	\parent=(dirname path)
 	is_dir parent ();
 	loop parent
@@ -12,7 +12,7 @@
 \run_simple_process=
 	(
 	\echo=
-		(\fh @\loop
+		(\fh @\\loop
 		#\text=(fread fh 8192)
 		\text=(fread fh 256)
 		#\text=(fread fh 1)
@@ -21,7 +21,7 @@
 		loop
 		)
 
-	\child_fn\input
+	\\child_fn\\input
 	run_process child_fn \child_in\child_out
 
 	fput child_in input

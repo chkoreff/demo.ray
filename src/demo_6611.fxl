@@ -1,25 +1,26 @@
+#use_syntax_2
 # Create the executable code for a raylib graphics program and run it.
 \cx=(value; std; use "lib/run_7137.fxl")
 value; cx; \;
 
-\gen_cube_demo==
+\\gen_cube_demo=
 	(
 	\screenWidth= "800"
 	\screenHeight="450"
 
-	\fps=="60"
-	#\fps=="120" # NOTE This is too fast, you can see the aliasing.
+	\fps="60"
+	#\fps="120" # NOTE This is too fast, you can see the aliasing.
 
-	\background_color=="RAYWHITE"
+	\background_color="RAYWHITE"
 
-	\title=="raylib [core] example - 3d camera first person"
+	\title="raylib [core] example - 3d camera first person"
 
-	\camera_mode=="CAMERA_FIRST_PERSON"
-	\camera_position==["4.0f" "2.0f" "4.0f"]
-	\camera_target==[ "0.0f" "1.8f" "0.0f" ]
-	\camera_up==[ "0.0f" "1.0f" "0.0f" ]
+	\camera_mode="CAMERA_FIRST_PERSON"
+	\camera_position=["4.0f" "2.0f" "4.0f"]
+	\camera_target=[ "0.0f" "1.8f" "0.0f" ]
+	\camera_up=[ "0.0f" "1.0f" "0.0f" ]
 	\camera_fovy="60.0f"
-	\camera_projection=="CAMERA_PERSPECTIVE"
+	\camera_projection="CAMERA_PERSPECTIVE"
 
 	say ["// "title]
 	say "// Copyright (c) 2015-2022 Ramon Santamaria (@raysan5)"
@@ -223,7 +224,7 @@ value; cx; \;
 	nl
 	)
 
-\gen_main==
+\\gen_main=
 	(
 	say "int main(void)"
 	scope
@@ -235,7 +236,7 @@ value; cx; \;
 	)
 
 # Add the main program.
-\gen_source==
+\\gen_source=
 	(
 	gen_cube_demo
 	gen_main

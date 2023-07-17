@@ -1,4 +1,4 @@
-#
+#use_syntax_2
 \cx_indent=(value; std; use "lib/indent.fxl")
 
 # Context which defines formatted output routines.
@@ -36,7 +36,7 @@ def "local_objects" local_objects;
 def "cx_gen" cx_gen;
 \;
 
-\raylib_objects==
+\raylib_objects=
 [
 "rcore.o"
 "rglfw.o"
@@ -57,17 +57,17 @@ def "cx_gen" cx_gen;
 \dir_obj=(path_under dir_root "cache/obj")
 
 # Generate a C source file.
-\do_gen_C==
-	(\content\file_c
+\do_gen_C=
+	(\\content\file_c
 	create_parent_directory file_c
 	\fh=(fopen file_c "w")
 	(use_output_fh fh; content)
 	fclose fh
 	)
 
-\do_compile==
+\\do_compile=
 	(
-	\options==
+	\options=
 	[
 	"-Wall" "-Werror" "-Wunused-parameter" "-Wdeclaration-after-statement"
 	"-O3"
@@ -80,19 +80,19 @@ def "cx_gen" cx_gen;
 	run_sh T ["gcc -c "(join " " options)" "file_c" -o "file_o]
 	)
 
-\do_link==
+\do_link=
 	(\objects\libs\file_e
 	create_parent_directory file_e
 	run_sh T ["gcc -s "(join " " objects)" -o "file_e" "(join " " libs)]
 	)
 
 # Find position of the last "." in name, if any.
-\find_suffix==
+\find_suffix=
 	(\name
 	\pos=(search name "." 0)
 	is_void pos pos;
 
-	(@\loop\pos
+	(@\\loop\pos
 	\pos=(+ pos 1)
 	\next_pos=(search name "." pos)
 	is_void next_pos pos;
@@ -102,7 +102,7 @@ def "cx_gen" cx_gen;
 	)
 
 # Extract the logical module from a script name.
-\get_module==
+\get_module=
 	(\name
 	\name=(basename name) # Doesn't matter how we got here.
 	\pos=(find_suffix name)
@@ -111,21 +111,21 @@ def "cx_gen" cx_gen;
 	)
 
 # Print the demo output to stdout.
-\put_demo==(use_output_fh stdout)
+\\put_demo=(use_output_fh stdout)
 
 # Build or run a raylib application from the given C source code.  This uses
 # the name of the currently running script to establish a place in the cache
 # directory to build the code.
 #
 # LATER 20230203 Automatically download and compile raylib if not present.
-\run_demo==
-	(\content
+\run_demo=
+	(\\content
 
 	\script_name=(default ""; argv 1)
 	\module=(get_module script_name)
 
 	\file_e=(path_under dir_bin module)
-	\stale==(is_newer script_name file_e)
+	\stale=(is_newer script_name file_e)
 
 	if stale
 	(
