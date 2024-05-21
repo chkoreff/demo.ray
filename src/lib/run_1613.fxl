@@ -1,6 +1,8 @@
 # Top level library for demo scripts
-value;
-std;
-def "local_objects" [];
+value
+(
 def "name_extension" "lib/raylib_8668.fxl";
+def "local_objects" [];
+std
+);
 use "lib/run.fxl"

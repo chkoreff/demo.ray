@@ -1,6 +1,7 @@
 # Top level library for demo scripts
-value;
-std;
+value
+(
+def "name_extension" "lib/raylib_5567.fxl";
 def "local_objects"
 [
 "die.o"
@@ -15,5 +16,6 @@ def "local_objects"
 "plane.o"
 "text_area.o"
 ];
-def "name_extension" "lib/raylib_5567.fxl";
+std
+);
 use "lib/run.fxl"
