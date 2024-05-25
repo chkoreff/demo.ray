@@ -54,10 +54,11 @@
 
 set_output_fh stdout
 
+\end
 def "put" put;
 def "nl" nl;
 def "say" say;
 def "indent" indent;
 def "tab" tab;
 def "use_output_fh" use_output_fh;
-void
+end

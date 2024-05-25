@@ -60,10 +60,11 @@
 		)
 	)
 
+\end
 def "DrawText" DrawText;
 def "DrawRectangle" DrawRectangle;
 def "DrawWireRectangle" DrawWireRectangle;
 def "DrawPlane" DrawPlane;
 def "DrawCube" DrawCube;
 def "DrawWireCube" DrawWireCube;
-void
+end

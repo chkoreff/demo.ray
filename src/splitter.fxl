@@ -1,6 +1,5 @@
 #
-\cx_indent=(value std; use "lib/indent.fxl")
-value (:: cx_indent std) \;
+value ((value std; use "lib/indent.fxl"); std) \;
 
 \source_name=(argv 2)
 is_undef source_name
