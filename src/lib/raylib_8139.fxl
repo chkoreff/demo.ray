@@ -30,9 +30,8 @@
 	["Fade("color", "alpha")"]
 	)
 
-\end
 def "split_vec" split_vec;
 def "Vector3" Vector3;
 def "Vector2" Vector2;
 def "Fade" Fade;
-end
+void
