@@ -1,0 +1,77 @@
+# Top level program for demo scripts
+
+\cx_indent=(value std; use "lib/indent.fxl")
+
+\\cx_demo=
+	(
+	\form_raylib_specific
+	\local_objects
+
+	\cx_C=(value (:: cx_indent; std); use "lib/C.fxl")
+
+	# Basic output rendering with C enhancements
+	\cx_render_C=(:: cx_C; :: cx_indent; std)
+
+	# Common raylib routines
+	\cx_common=(value cx_render_C; use "lib/raylib_common.fxl")
+
+	# Routines common to all styles
+	\cx_render_common=(:: cx_common; cx_render_C)
+
+	# Routines specific to this style
+	\cx_render_specific=(value cx_render_common form_raylib_specific)
+
+	\cx_proc=(value std; use "lib/proc.fxl")
+
+	# Routines for running a demo
+	\cx_run=
+		(
+		value
+		(
+		def "local_objects" local_objects;
+		:: cx_proc;
+		:: cx_indent;
+		std
+		);
+		use "lib/run.fxl"
+		)
+
+	:: cx_run;
+	:: cx_render_specific;
+	cx_render_common
+	)
+
+\style
+value
+	(
+	eq style "0462"
+		(
+		cx_demo
+		(use "lib/raylib_0462.fxl")
+		[]
+		);
+	eq style "6611"
+		(
+		cx_demo
+		(use "lib/raylib_6611.fxl")
+		[
+		"die.o"
+		"file.o"
+		"format.o"
+		"output.o"
+		"memory.o"
+		"cube.o"
+		"cube_l.o"
+		"rectangle.o"
+		"rectangle_l.o"
+		"plane.o"
+		"text_area.o"
+		]
+		);
+	eq style "splitter"
+		(
+		:: cx_indent;
+		std
+		);
+	error ["Unrecognized demo style "(as_str style)]
+	)

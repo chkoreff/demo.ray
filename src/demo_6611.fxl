@@ -1,5 +1,5 @@
 # Create the executable code for a raylib graphics program and run it.
-value (value std; use "lib/run_7137.fxl") \;
+value std (use "main.fxl") "6611" \;
 
 \\gen_cube_demo=
 	(

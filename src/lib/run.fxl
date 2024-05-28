@@ -1,38 +1,4 @@
 #
-\cx_indent=(value std; use "lib/indent.fxl")
-
-# Context which defines formatted output routines.
-\cx_gen=
-	(
-	# Basic output rendering with C enhancements.
-	\cx_render=
-		(
-		\cx_C=(value (:: cx_indent; std); use "lib/C.fxl")
-		:: cx_C;
-		:: cx_indent;
-		std
-		)
-	# Common raylib routines.
-	\cx_8139=(value cx_render; use "lib/raylib_8139.fxl")
-	# Display raylib types and routine calls.
-	\cx_raylib=(value (:: cx_8139; cx_render); use name_extension)
-	:: cx_raylib;
-	:: cx_8139;
-	cx_render
-	)
-
-\cx_proc=(value std; use "lib/proc.fxl")
-
-value
-(
-def "local_objects" local_objects;
-def "cx_gen" cx_gen;
-:: cx_proc;
-:: cx_indent;
-std
-)
-\;
-
 \raylib_objects=
 [
 "rcore.o"
@@ -162,5 +128,4 @@ std
 
 def "put_demo" put_demo;
 def "run_demo" run_demo;
-:: cx_gen;
-std
+void
