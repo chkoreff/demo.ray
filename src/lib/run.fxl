@@ -8,16 +8,19 @@
 "libraylib.a"
 ]
 
-# The root directory is one level above src.
-\dir_root=
-	(
-	eq dir_local "." "..";
-	dirname dir_local
+\dir_above=
+	(\path
+	\x=(dirname path)
+	\x=(eq x "." ".." x)
+	. x "/"
 	)
 
-\dir_bin=(path_under dir_root "cache/bin")
-\dir_src=(path_under dir_root "cache/src")
-\dir_obj=(path_under dir_root "cache/obj")
+# The root directory is one level above src.
+\dir_root=(dir_above dir_local)
+
+\dir_bin=(. dir_root "cache/bin/")
+\dir_src=(. dir_root "cache/src/")
+\dir_obj=(. dir_root "cache/obj/")
 
 # Generate a C source file.
 \do_gen_C=
@@ -87,23 +90,23 @@
 	\script_name=(default ""; argv 1)
 	\module=(get_module script_name)
 
-	\file_e=(path_under dir_bin module)
+	\file_e=(. dir_bin module)
 	\stale=(is_newer script_name file_e)
 
 	if stale
 	(
 	trace_elapsed;
 
-	\file_c=(path_under dir_src; . module ".c")
-	\file_o=(path_under dir_obj; . module ".o")
+	\file_c=(. dir_src; . module ".c")
+	\file_o=(. dir_obj; . module ".o")
 
 	do_gen_C content file_c
 	do_compile file_c file_o
 
 	\objects=
 		(
-		\dir=(path_under dir_root "raylib/src")
-		map (path_under dir) raylib_objects
+		\dir=(. dir_root "raylib/src/")
+		map (. dir) raylib_objects
 		)
 
 	\objects=
@@ -113,8 +116,8 @@
 		# LATER 20230210 Eliminate build script and do that in Fexl.
 		run_sh T ["cd "dir_local" && ./build"]
 
-		\dir=(path_under dir_root "obj")
-		map (path_under dir) local_objects
+		\dir=(. dir_root "obj/")
+		map (. dir) local_objects
 		)
 
 	do_link
@@ -123,9 +126,8 @@
 		file_e
 	)
 
-	run_sh F (path_under dir_bin module)
+	run_sh F (. dir_bin module)
 	)
 
-def "put_demo" put_demo;
-def "run_demo" run_demo;
-void
+define "put_demo" put_demo
+define "run_demo" run_demo

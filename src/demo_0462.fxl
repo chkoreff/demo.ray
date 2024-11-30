@@ -1,5 +1,6 @@
 # Create the executable code for a raylib graphics program and run it.
-value std (use "main.fxl") "0462" \;
+use "lib/style_0462.fxl"
+evaluate \;
 
 \\assign_numbers=
 	(
@@ -404,7 +405,7 @@ value std (use "main.fxl") "0462" \;
 	say "int main(void)"
 	scope
 		(
-		say [""routine"();"]
+		say [routine"();"]
 		say "return 0;"
 		)
 	)

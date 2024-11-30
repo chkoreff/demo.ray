@@ -1,0 +1,24 @@
+#
+use "lib/indent.fxl"
+use "lib/C.fxl"
+use "lib/raylib_common.fxl"
+use "lib/proc.fxl"
+
+define "local_objects"
+	[
+	"die.o"
+	"file.o"
+	"format.o"
+	"output.o"
+	"memory.o"
+	"cube.o"
+	"cube_l.o"
+	"rectangle.o"
+	"rectangle_l.o"
+	"plane.o"
+	"text_area.o"
+	]
+
+use "lib/raylib_6611.fxl"
+
+use "lib/run.fxl"

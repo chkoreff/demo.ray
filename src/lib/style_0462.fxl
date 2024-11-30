@@ -1,0 +1,10 @@
+#
+use "lib/indent.fxl"
+use "lib/C.fxl"
+use "lib/raylib_common.fxl"
+use "lib/proc.fxl"
+
+define "local_objects" []
+use "lib/raylib_0462.fxl"
+
+use "lib/run.fxl"

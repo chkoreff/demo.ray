@@ -49,10 +49,9 @@
 		color_wire");"]
 	)
 
-def "DrawText" DrawText;
-def "DrawRectangle" DrawRectangle;
-def "DrawWireRectangle" DrawWireRectangle;
-def "DrawPlane" DrawPlane;
-def "DrawCube" DrawCube;
-def "DrawWireCube" DrawWireCube;
-void
+define "DrawText" DrawText
+define "DrawRectangle" DrawRectangle
+define "DrawWireRectangle" DrawWireRectangle
+define "DrawPlane" DrawPlane
+define "DrawCube" DrawCube
+define "DrawWireCube" DrawWireCube

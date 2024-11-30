@@ -58,8 +58,7 @@
 	die
 	)
 
-def "create_parent_directory" create_parent_directory;
-def "run_simple_process" run_simple_process;
-def "run_cmd" run_cmd;
-def "run_sh" run_sh;
-void
+define "create_parent_directory" create_parent_directory
+define "run_simple_process" run_simple_process
+define "run_cmd" run_cmd
+define "run_sh" run_sh

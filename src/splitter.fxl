@@ -1,5 +1,6 @@
 #
-value std (use "main.fxl") "splitter" \;
+use "lib/indent.fxl"
+evaluate \;
 
 \source_name=(argv 2)
 is_undef source_name

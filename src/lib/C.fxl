@@ -17,7 +17,6 @@
 # strings.
 \quoteC=(\text [QU text QU])
 
-def "enclose" enclose;
-def "scope" scope;
-def "quoteC" quoteC;
-void
+define "enclose" enclose
+define "scope" scope
+define "quoteC" quoteC
