@@ -84,6 +84,8 @@ evaluate \;
 			)
 		nl
 		say ["SetCameraMode(camera, "camera_mode");"]
+		# Setting the camera mode disables the cursor so I enable it here.
+		say "EnableCursor();"
 		say ["SetTargetFPS("fps");"]
 		nl
 		say "// Main game loop"

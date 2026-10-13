@@ -35,10 +35,12 @@
 	(
 	\options=
 	[
-	"-Wall" "-Werror" "-Wunused-parameter" "-Wdeclaration-after-statement"
+	"-Wall" "-Werror" "-Wunused-parameter"
+	# "-Wdeclaration-after-statement" # breaks raylib.h
 	"-O3"
 	"-I" "."
 	"-I" dir_local
+	"-I" "../raylib/src"
 	]
 
 	\file_c\file_o

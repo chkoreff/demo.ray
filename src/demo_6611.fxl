@@ -80,6 +80,8 @@ evaluate \;
 		say "// Set a first person camera mode"
 		say ["SetCameraMode(camera, "camera_mode");"]
 		nl
+		# Setting the camera mode disables the cursor so I enable it here.
+		say "EnableCursor();"
 		say ["SetTargetFPS("fps");"
 			" // Set our game to run at "fps" frames-per-second"]
 		nl

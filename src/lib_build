@@ -86,7 +86,7 @@ compile()
 		# The next option enforces ISO C90 compatibility.
 		options="$options -Wdeclaration-after-statement"
 
-		run gcc -c $options -O3 -I . $file_c -o $file_o
+		run gcc -c $options -O3 -I ../raylib/src -I . $file_c -o $file_o
 	fi
 	}
 
